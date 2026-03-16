@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../../shared/widgets/app_logo.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
+import '../../../../shared/widgets/skeleton.dart';
 import '../../../profile/presentation/screens/complete_profile_screen.dart';
 import '../../../home/presentation/screens/home_screen.dart';
 import '../providers/auth_provider.dart';
@@ -107,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const Spacer(flex: 2),
                 _isLoading
-                    ? const CircularProgressIndicator(color: Color(0xFFFFD35A))
+                    ? const SkeletonButton()
                     : PrimaryButton(
                         text: 'Đăng nhập',
                         onPressed: _login,

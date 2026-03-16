@@ -44,7 +44,7 @@ class ImagePreviewUserSelection extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(2.0),
             child: CircleAvatar(
-              backgroundColor: Colors.white.withOpacity(0.1),
+              backgroundColor: Colors.white.withValues(alpha: 0.1),
               backgroundImage: imageUrl != null ? NetworkImage(imageUrl) : null,
               child: icon != null ? Icon(icon, color: Colors.white, size: 24) : null,
             ),

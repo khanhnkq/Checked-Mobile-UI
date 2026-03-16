@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../data/models/photo_models.dart';
-import '../screens/photo_detail_screen.dart';
+import '../../../../shared/widgets/skeleton.dart';
 
 class HistoryPhotoGrid extends StatelessWidget {
   final List<PhotoResponse> photos;
+  final ValueChanged<PhotoResponse> onPhotoTap;
 
-  const HistoryPhotoGrid({super.key, required this.photos});
+  const HistoryPhotoGrid({
+    super.key,
+    required this.photos,
+    required this.onPhotoTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,36 +27,18 @@ class HistoryPhotoGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         final photo = photos[index];
         return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PhotoDetailScreen(photo: photo),
-              ),
-            );
-          },
+          onTap: () => onPhotoTap(photo),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Container(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withValues(alpha: 0.05),
               child: Image.network(
                 photo.thumbnailUrl,
                 fit: BoxFit.cover,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
-                  return Center(
-                    child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
-                        color: const Color(0xFFFFD35A),
-                      ),
-                    ),
+                  return const SkeletonBox(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
                   );
                 },
                 errorBuilder: (context, error, stackTrace) {

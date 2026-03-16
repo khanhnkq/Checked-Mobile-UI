@@ -43,7 +43,7 @@ class ImagePreviewBottomActions extends StatelessWidget {
         height: 80,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: 0.2),
         ),
         child: const Center(
           child: Icon(LucideIcons.send, color: Colors.white, size: 32),

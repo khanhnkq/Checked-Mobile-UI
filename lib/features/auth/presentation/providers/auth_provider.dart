@@ -13,16 +13,19 @@ class AuthProvider extends ChangeNotifier {
   final SecureStorageService _storageService = SecureStorageService();
 
   AuthStatus _status = AuthStatus.unauthenticated;
+  bool _isInitializing = true;
   String? _pendingEmail;
   AuthResponse? _authResponse;
   UserResponse? _userProfile;
   String? _errorMessage;
 
   AuthStatus get status => _status;
+  bool get isInitializing => _isInitializing;
   String? get pendingEmail => _pendingEmail;
   AuthResponse? get authResponse => _authResponse;
   UserResponse? get userProfile => _userProfile;
   String? get errorMessage => _errorMessage;
+  String? get currentUserId => _userProfile?.id ?? _authResponse?.id;
 
   bool get isProfileIncomplete {
     if (_authResponse != null) {
@@ -32,6 +35,52 @@ class AuthProvider extends ChangeNotifier {
       return !_userProfile!.profileCompleted;
     }
     return false;
+  }
+
+  Future<void> restoreSession() async {
+    if (!_isInitializing) {
+      return;
+    }
+
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final token = await _storageService.getToken();
+
+      if (token == null || token.isEmpty) {
+        await _resetSession(clearStorage: false);
+        return;
+      }
+
+      final profile = await _profileService.getMe();
+
+      if (profile == null) {
+        await _resetSession();
+        return;
+      }
+
+      _userProfile = profile;
+      _authResponse = AuthResponse(
+        token: token,
+        type: 'Bearer',
+        id: profile.id,
+        email: profile.email,
+        username: profile.username,
+        isVerified: profile.isVerified,
+        profileCompleted: profile.profileCompleted,
+        displayName: profile.displayName,
+        avatarUrl: profile.avatarUrl,
+        nextStep: profile.profileCompleted ? 'HOME' : 'COMPLETE_PROFILE',
+      );
+      _status = AuthStatus.authenticated;
+    } catch (e) {
+      debugPrint('Error restoring session: $e');
+      await _resetSession();
+    } finally {
+      _isInitializing = false;
+      notifyListeners();
+    }
   }
 
   Future<void> login(String identifier, String password) async {
@@ -98,8 +147,19 @@ class AuthProvider extends ChangeNotifier {
     try {
       _userProfile = await _profileService.getMe();
     } catch (e) {
-      print('Error fetching profile: $e');
+      debugPrint('Error fetching profile: $e');
     }
+  }
+
+  Future<void> _resetSession({bool clearStorage = true}) async {
+    if (clearStorage) {
+      await _storageService.clearAll();
+    }
+
+    _status = AuthStatus.unauthenticated;
+    _authResponse = null;
+    _userProfile = null;
+    _pendingEmail = null;
   }
 
   Future<bool> completeProfile({
@@ -134,11 +194,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   void logout() async {
-    await _storageService.clearAll();
-    _status = AuthStatus.unauthenticated;
-    _authResponse = null;
-    _userProfile = null;
-    _pendingEmail = null;
+    await _resetSession();
     notifyListeners();
   }
 }

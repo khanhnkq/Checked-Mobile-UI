@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../../shared/widgets/app_logo.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
+import '../../../../shared/widgets/skeleton.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../home/presentation/screens/home_screen.dart';
 
@@ -77,7 +78,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                   'Hãy cho chúng tôi biết tên của bạn để bạn bè có thể nhận ra.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha: 0.6),
                     fontSize: 14,
                   ),
                 ),
@@ -93,7 +94,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                 ),
                 const SizedBox(height: 60),
                 _isLoading
-                    ? const CircularProgressIndicator(color: Color(0xFFFFD35A))
+                    ? const SkeletonButton()
                     : PrimaryButton(
                         text: 'Tiếp tục',
                         onPressed: _onComplete,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../shared/widgets/circle_icon_button.dart';
+import 'home_top_bar.dart';
 
 class ImagePreviewTopBar extends StatelessWidget {
   final VoidCallback onDownload;
@@ -9,29 +10,23 @@ class ImagePreviewTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      // Thống nhất padding horizontal 24.0 để thẳng hàng với HomeTopBar
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const SizedBox(width: 44), // Spacer for centering text
-          const Text(
-            'Gửi đến...',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          CircleIconButton(
-            icon: LucideIcons.download,
-            onPressed: onDownload,
-            size: 44,
-            iconSize: 22,
-          ),
-        ],
+    return HomeTopBar.shared(
+      center: const Text(
+        'Gửi đến...',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
       ),
+      trailing: CircleIconButton(
+        icon: LucideIcons.download,
+        onPressed: onDownload,
+        size: 44,
+        iconSize: 22,
+        color: Colors.white.withValues(alpha: 0.15),
+      ),
+      useProfileLeading: true,
     );
   }
 }

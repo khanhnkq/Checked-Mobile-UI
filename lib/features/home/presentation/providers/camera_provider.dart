@@ -11,9 +11,13 @@ class CameraProvider extends ChangeNotifier {
   bool get isInitialized => _isInitialized;
 
   Future<void> initialize() async {
-    _cameras = await availableCameras();
-    if (_cameras != null && _cameras!.isNotEmpty) {
-      await _setupController();
+    try {
+      _cameras = await availableCameras();
+      if (_cameras != null && _cameras!.isNotEmpty) {
+        await _setupController();
+      }
+    } catch (e) {
+      debugPrint('Error getting cameras: $e');
     }
   }
 
@@ -22,6 +26,11 @@ class CameraProvider extends ChangeNotifier {
 
     _isInitialized = false;
     notifyListeners();
+
+    // Hủy controller cũ nếu có trước khi tạo cái mới
+    if (_controller != null) {
+      await _controller!.dispose();
+    }
 
     _controller = CameraController(
       _cameras![_cameraIndex],
@@ -33,7 +42,8 @@ class CameraProvider extends ChangeNotifier {
       await _controller!.initialize();
       _isInitialized = true;
     } catch (e) {
-      print('Camera initialization error: $e');
+      debugPrint('Camera initialization error: $e');
+      _isInitialized = false;
     }
     notifyListeners();
   }
@@ -42,18 +52,18 @@ class CameraProvider extends ChangeNotifier {
     if (_cameras == null || _cameras!.length < 2) return;
 
     _cameraIndex = (_cameraIndex + 1) % _cameras!.length;
-    await _controller?.dispose();
     await _setupController();
   }
 
   Future<XFile?> takePicture() async {
-    if (_controller == null || !_controller!.value.isInitialized) return null;
+    final controller = _controller;
+    if (controller == null || !controller.value.isInitialized) return null;
     
     try {
-      final image = await _controller!.takePicture();
+      final image = await controller.takePicture();
       return image;
     } catch (e) {
-      print('Error taking picture: $e');
+      debugPrint('Error taking picture: $e');
       return null;
     }
   }

@@ -18,7 +18,7 @@ class AppLogo extends StatelessWidget {
         borderRadius: BorderRadius.circular(size * 0.3),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFFD35A).withOpacity(0.2),
+            color: const Color(0xFFFFD35A).withValues(alpha: 0.2),
             blurRadius: 40,
             spreadRadius: 15,
           ),
@@ -28,7 +28,7 @@ class AppLogo extends StatelessWidget {
         child: Icon(
           Icons.favorite,
           size: size * 0.6,
-          color: const Color(0xFF12110B).withOpacity(0.4),
+          color: const Color(0xFF12110B).withValues(alpha: 0.4),
         ),
       ),
     );

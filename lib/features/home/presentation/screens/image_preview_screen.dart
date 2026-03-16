@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:locket/features/expense/data/models/expense_models.dart';
 import '../widgets/image_preview_top_bar.dart';
 import '../widgets/image_preview_view.dart';
 import '../widgets/image_preview_bottom_actions.dart';
@@ -18,6 +19,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
   final TextEditingController _amountController = TextEditingController();
   final PhotoService _photoService = PhotoService();
   bool _isSending = false;
+  ExpenseCategory? _selectedCategory;
 
   void _onSend() async {
     setState(() => _isSending = true);
@@ -26,6 +28,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
       final response = await _photoService.uploadPhoto(
         filePath: widget.imagePath,
         amount: amount,
+        categoryId: _selectedCategory?.id,
         recipientScope: 'ALL_FRIENDS',
       );
 
@@ -71,6 +74,9 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
                 ImagePreviewView(
                   imagePath: widget.imagePath,
                   amountController: _amountController,
+                  onCategoryChanged: (cat) {
+                    setState(() => _selectedCategory = cat);
+                  },
                 ),
                 const Spacer(),
                 ImagePreviewBottomActions(
@@ -89,7 +95,9 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
               Container(
                 color: Colors.black54,
                 child: const Center(
-                  child: CircularProgressIndicator(color: Color(0xFFFFD35A)),
+                  child: CircularProgressIndicator(
+                    color: Color(0xFFFFD35A),
+                  ),
                 ),
               ),
           ],

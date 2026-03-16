@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../../../../core/network/dio_client.dart';
 import '../models/photo_models.dart';
 
@@ -9,6 +10,7 @@ class PhotoService {
     required String filePath,
     String? caption,
     double? amount,
+    String? categoryId,
     String recipientScope = 'ALL_FRIENDS',
     List<String>? recipientIds,
   }) async {
@@ -20,6 +22,7 @@ class PhotoService {
         ),
         if (caption != null) 'caption': caption,
         if (amount != null) 'amount': amount,
+        if (categoryId != null) 'categoryId': categoryId,
         'recipientScope': recipientScope,
         if (recipientIds != null && recipientIds.isNotEmpty)
           'recipientIds': recipientIds.join(','),
@@ -35,7 +38,7 @@ class PhotoService {
         return PhotoResponse.fromJson(response.data);
       }
     } on DioException catch (e) {
-      print('UPLOAD PHOTO ERROR: ${e.response?.data}');
+      debugPrint('UPLOAD PHOTO ERROR: ${e.response?.data}');
       throw Exception(e.response?.data['message'] ?? 'Gửi ảnh thất bại');
     }
     return null;
@@ -46,7 +49,7 @@ class PhotoService {
       final response = await _dio.get('/api/v1/photos/feed');
       return _parsePhotoList(response.data);
     } on DioException catch (e) {
-      print('GET FEED ERROR: ${e.response?.data}');
+      debugPrint('GET FEED ERROR: ${e.response?.data}');
       throw Exception(e.response?.data['message'] ?? 'Không thể tải bảng tin');
     }
   }
@@ -56,24 +59,19 @@ class PhotoService {
       final response = await _dio.get('/api/v1/photos/my-photos');
       return _parsePhotoList(response.data);
     } on DioException catch (e) {
-      print('GET MY PHOTOS ERROR: ${e.response?.data}');
+      debugPrint('GET MY PHOTOS ERROR: ${e.response?.data}');
       throw Exception(e.response?.data['message'] ?? 'Không thể tải ảnh của tôi');
     }
   }
 
-  /// Hàm helper để parse dữ liệu linh hoạt từ List hoặc Map (wrap dữ liệu)
   List<PhotoResponse> _parsePhotoList(dynamic data) {
     if (data == null) return [];
-    
     List<dynamic> list = [];
-    
     if (data is List) {
       list = data;
     } else if (data is Map) {
-      // Tìm danh sách trong các key phổ biến của Spring Data (content, data, results)
       list = data['content'] ?? data['data'] ?? data['results'] ?? [];
     }
-    
     return list.map((json) => PhotoResponse.fromJson(json)).toList();
   }
 }

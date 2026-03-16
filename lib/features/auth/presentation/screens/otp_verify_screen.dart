@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../../shared/widgets/app_logo.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
+import '../../../../shared/widgets/skeleton.dart';
 import '../../../profile/presentation/screens/complete_profile_screen.dart';
 import '../../../home/presentation/screens/home_screen.dart';
 import '../providers/auth_provider.dart';
@@ -89,7 +90,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                   'Mã OTP đã được gửi đến\n${widget.email}',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha: 0.6),
                     fontSize: 14,
                   ),
                 ),
@@ -100,7 +101,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                 ),
                 const Spacer(flex: 2),
                 _isLoading
-                    ? const CircularProgressIndicator(color: Color(0xFFFFD35A))
+                    ? const SkeletonButton()
                     : PrimaryButton(
                         text: 'Xác nhận',
                         onPressed: _verifyOtp,

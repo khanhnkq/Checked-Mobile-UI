@@ -23,7 +23,7 @@ class CircleIconButton extends StatelessWidget {
       onTap: onPressed,
       child: CustomPaint(
         painter: CircleBackgroundPainter(
-          color: color ?? Colors.white.withOpacity(0.15),
+          color: color ?? Colors.white.withValues(alpha: 0.15),
         ),
         child: SizedBox(
           width: size,

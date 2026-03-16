@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../storage/secure_storage_service.dart';
 
 class DioClient {
   final Dio _dio = Dio(
     BaseOptions(
-
-      baseUrl: 'http://192.168.1.60:8080',
+      baseUrl: _resolveBaseUrl(),
       // Tăng thời gian chờ lên 30s vì bước gửi mail OTP có thể chậm
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
@@ -42,13 +43,13 @@ class DioClient {
           return handler.next(options);
         },
         onError: (DioException e, handler) async {
-          print('--- DIO ERROR ---');
-          print('URL: ${e.requestOptions.uri}');
-          print('Type: ${e.type}'); // In thêm loại lỗi (timeout, connection...)
-          print('Status: ${e.response?.statusCode}');
-          print('Response Data: ${e.response?.data}');
-          print('Error Message: ${e.message}');
-          print('-----------------');
+          debugPrint('--- DIO ERROR ---');
+          debugPrint('URL: ${e.requestOptions.uri}');
+          debugPrint('Type: ${e.type}'); // In thêm loại lỗi (timeout, connection...)
+          debugPrint('Status: ${e.response?.statusCode}');
+          debugPrint('Response Data: ${e.response?.data}');
+          debugPrint('Error Message: ${e.message}');
+          debugPrint('-----------------');
           return handler.next(e);
         },
       ),
@@ -56,4 +57,12 @@ class DioClient {
   }
 
   Dio get dio => _dio;
+
+  static String _resolveBaseUrl() {
+    try {
+      return dotenv.maybeGet('API_BASE_URL') ?? 'http://192.168.1.33:8080';
+    } catch (_) {
+      return 'http://192.168.1.33:8080';
+    }
+  }
 }

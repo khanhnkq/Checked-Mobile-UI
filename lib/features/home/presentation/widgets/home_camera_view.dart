@@ -15,7 +15,9 @@ class _HomeCameraViewState extends State<HomeCameraView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CameraProvider>().initialize();
+      if (mounted) {
+        context.read<CameraProvider>().initialize();
+      }
     });
   }
 
@@ -23,8 +25,13 @@ class _HomeCameraViewState extends State<HomeCameraView> {
   Widget build(BuildContext context) {
     return Consumer<CameraProvider>(
       builder: (context, cameraProvider, child) {
+        final controller = cameraProvider.controller;
+        final bool isInitialized = cameraProvider.isInitialized && 
+                                   controller != null && 
+                                   controller.value.isInitialized;
+
         return AspectRatio(
-          aspectRatio: 1.0, // Đảm bảo khung luôn là hình vuông
+          aspectRatio: 1.0,
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -36,15 +43,10 @@ class _HomeCameraViewState extends State<HomeCameraView> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Camera Preview với logic căn giữa và cắt (crop)
-                  cameraProvider.isInitialized && cameraProvider.controller != null
-                      ? _buildCameraPreview(cameraProvider.controller!)
-                      : Container(
-                          color: Colors.black,
-                          child: const Center(
-                            child: CircularProgressIndicator(color: Color(0xFFFFD35A)),
-                          ),
-                        ),
+                  if (isInitialized)
+                    _buildCameraPreview(controller)
+                  else
+                    const ColoredBox(color: Colors.black),
                   
                   // Top Overlay Buttons
                   Positioned(
@@ -69,11 +71,16 @@ class _HomeCameraViewState extends State<HomeCameraView> {
   Widget _buildCameraPreview(CameraController controller) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Lấy tỷ lệ của camera (thường là landscape, ví dụ 1.77 cho 16:9)
-        double cameraAspectRatio = controller.value.aspectRatio;
+        // Lấy tỷ lệ của camera an toàn hơn
+        double cameraAspectRatio = 1.0;
+        try {
+          if (controller.value.isInitialized) {
+            cameraAspectRatio = controller.value.aspectRatio;
+          }
+        } catch (_) {
+          cameraAspectRatio = 1.0;
+        }
         
-        // Đảm bảo tỷ lệ luôn < 1 cho chế độ Portrait (chiều cao > chiều rộng)
-        // Nếu điện thoại trả về 1.77, chúng ta đổi thành 1/1.77 = 0.56
         if (cameraAspectRatio > 1) {
           cameraAspectRatio = 1 / cameraAspectRatio;
         }
@@ -82,10 +89,9 @@ class _HomeCameraViewState extends State<HomeCameraView> {
           width: constraints.maxWidth,
           height: constraints.maxWidth,
           child: FittedBox(
-            fit: BoxFit.cover, // Cắt bỏ phần thừa để lấp đầy khung vuông
+            fit: BoxFit.cover,
             child: SizedBox(
               width: constraints.maxWidth,
-              // Chiều cao thực tế của preview camera dựa trên tỷ lệ chuẩn
               height: constraints.maxWidth / cameraAspectRatio,
               child: CameraPreview(controller),
             ),
@@ -101,7 +107,7 @@ class _HomeCameraViewState extends State<HomeCameraView> {
       height: 40,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.black.withOpacity(0.3),
+        color: Colors.black.withValues(alpha: 0.3),
       ),
       child: Center(
         child: text != null

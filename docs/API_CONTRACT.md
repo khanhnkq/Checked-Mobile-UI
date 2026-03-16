@@ -798,3 +798,145 @@ Hai endpoint này cùng trả lịch sử ảnh user đã gửi.
   "createdAt": "2026-03-12T10:30:01"
 }
 ```
+
+## `PATCH /api/v1/photos/{photoId}/expense`
+
+Cho phép chủ ảnh cập nhật metadata chi tiêu sau khi đã upload.
+
+### Request
+
+```http
+PATCH /api/v1/photos/{photoId}/expense
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+```
+
+```json
+{
+  "amount": 65000,
+  "note": "Lunch with team",
+  "categoryId": "0f663a5a-9a62-45a8-9f48-afe8ed3ca5ec"
+}
+```
+
+### Rule
+- chỉ chủ ảnh mới được cập nhật
+- `amount` nếu gửi lên phải >= 0
+- `categoryId` phải là category đang active và user có quyền dùng (default hoặc own)
+
+---
+
+# 12. Expense module (expanded)
+
+Base path: `/api/v1/expense`
+
+## `GET /api/v1/expense/categories`
+
+Trả danh sách category đang active gồm:
+- category hệ thống mặc định (`isDefault=true`, `user_id=null`)
+- category riêng của current user (`isDefault=false`)
+
+### Response item
+
+```json
+{
+  "id": "uuid",
+  "name": "Food",
+  "icon": "restaurant",
+  "color": "#FF8A65",
+  "isDefault": true,
+  "isActive": true
+}
+```
+
+## `POST /api/v1/expense/categories`
+
+Tạo category cá nhân.
+
+```json
+{
+  "name": "Coffee",
+  "icon": "coffee",
+  "color": "#795548"
+}
+```
+
+## `PATCH /api/v1/expense/categories/{categoryId}`
+
+Update category cá nhân (không update category mặc định hệ thống).
+
+```json
+{
+  "name": "Cafe",
+  "icon": "coffee",
+  "color": "#6D4C41",
+  "isActive": true
+}
+```
+
+## `GET /api/v1/expense/budgets/{monthKey}`
+
+`monthKey` theo định dạng `yyyyMM`, ví dụ `202603`.
+
+```json
+{
+  "monthKey": "202603",
+  "amountLimit": 5000000,
+  "alertThresholdPct": 80,
+  "spent": 1250000,
+  "remaining": 3750000,
+  "exceeded": false
+}
+```
+
+Nếu chưa set budget, `amountLimit/alertThresholdPct/remaining` sẽ là `null`.
+
+## `PUT /api/v1/expense/budgets/{monthKey}`
+
+```json
+{
+  "amountLimit": 5000000,
+  "alertThresholdPct": 80
+}
+```
+
+## `GET /api/v1/expense/entries?monthKey=202603`
+
+Trả page các khoản chi (dữ liệu lấy từ photo có `amount > 0`).
+
+### Response item
+
+```json
+{
+  "photoId": "uuid",
+  "imageUrl": "https://...",
+  "thumbnailUrl": "https://...",
+  "amount": 65000,
+  "note": "Lunch with team",
+  "categoryId": "uuid",
+  "categoryName": "Food",
+  "takenAt": "2026-03-16T12:30:00",
+  "createdAt": "2026-03-16T12:30:02"
+}
+```
+
+## `GET /api/v1/expense/summary?monthKey=202603`
+
+```json
+{
+  "monthKey": "202603",
+  "totalSpent": 1250000,
+  "budgetLimit": 5000000,
+  "remaining": 3750000,
+  "budgetExceeded": false,
+  "percentUsed": 25,
+  "byCategory": [
+    {
+      "categoryId": "uuid",
+      "categoryName": "Food",
+      "totalAmount": 650000
+    }
+  ]
+}
+```
+

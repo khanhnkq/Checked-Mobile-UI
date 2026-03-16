@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../../../../core/network/dio_client.dart';
 import '../models/profile_models.dart';
 
@@ -12,7 +13,7 @@ class ProfileService {
         return UserResponse.fromJson(response.data);
       }
     } on DioException catch (e) {
-      print('GET ME ERROR: ${e.response?.data}');
+      debugPrint('GET ME ERROR: ${e.response?.data}');
       throw Exception(e.response?.data['message'] ?? 'Không thể lấy thông tin người dùng');
     }
     return null;
@@ -28,7 +29,7 @@ class ProfileService {
         return UserResponse.fromJson(response.data);
       }
     } on DioException catch (e) {
-      print('UPDATE PROFILE ERROR: ${e.response?.data}');
+      debugPrint('UPDATE PROFILE ERROR: ${e.response?.data}');
       throw Exception(e.response?.data['message'] ?? 'Cập nhật hồ sơ thất bại');
     }
     return null;
