@@ -1,29 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/widgets/app_logo.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/skeleton.dart';
-import '../../../profile/presentation/screens/complete_profile_screen.dart';
-import '../../../home/presentation/screens/home_screen.dart';
-import '../providers/auth_provider.dart';
-import 'register_screen.dart';
-import 'otp_verify_screen.dart';
+import '../riverpod_providers.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController _identifierController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
 
   void _login() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final authNotifier = ref.read(authProvider.notifier);
     final identifier = _identifierController.text.trim();
     final password = _passwordController.text;
 
@@ -36,33 +33,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
     
-    await authProvider.login(identifier, password);
+    await authNotifier.login(identifier, password);
 
     if (mounted) {
       setState(() => _isLoading = false);
       
-      if (authProvider.status == AuthStatus.authenticated) {
-        if (authProvider.isProfileIncomplete) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const CompleteProfileScreen()),
-          );
+      final authState = ref.read(authProvider);
+      if (authState.status == AuthStatus.authenticated) {
+        if (authState.isProfileIncomplete) {
+          context.go('/complete-profile');
         } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
-          );
+          context.go('/home');
         }
-      } else if (authProvider.status == AuthStatus.otpPending) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => OtpVerifyScreen(email: authProvider.pendingEmail ?? identifier),
-          ),
-        );
-      } else if (authProvider.errorMessage != null) {
+      } else if (authState.status == AuthStatus.otpPending) {
+        final email = Uri.encodeComponent(authState.pendingEmail ?? identifier);
+        context.push('/otp?email=$email');
+      } else if (authState.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(authProvider.errorMessage!)),
+          SnackBar(content: Text(authState.errorMessage!)),
         );
       }
     }
@@ -116,10 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const Spacer(flex: 3),
                 TextButton(
                   onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                    );
+                    context.go('/register');
                   },
                   child: const Text(
                     'Đăng ký',

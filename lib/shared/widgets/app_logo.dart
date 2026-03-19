@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class AppLogo extends StatelessWidget {
   final double size;
+  final bool showShadow;
   
   const AppLogo({
     super.key,
     this.size = 140,
+    this.showShadow = true,
   });
 
   @override
@@ -16,19 +19,22 @@ class AppLogo extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFFFD35A),
         borderRadius: BorderRadius.circular(size * 0.3),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFFFFD35A).withValues(alpha: 0.2),
-            blurRadius: 40,
-            spreadRadius: 15,
-          ),
-        ],
+        boxShadow: showShadow
+            ? [
+                BoxShadow(
+                  color: const Color(0xFFFFD35A).withValues(alpha: 0.2),
+                  blurRadius: 40,
+                  spreadRadius: 15,
+                ),
+              ]
+            : null,
       ),
       child: Center(
-        child: Icon(
-          Icons.favorite,
-          size: size * 0.6,
-          color: const Color(0xFF12110B).withValues(alpha: 0.4),
+        child: SvgPicture.asset(
+          'assets/icons/locket_logo.svg',
+          width: size,
+          height: size,
+          fit: BoxFit.contain,
         ),
       ),
     );

@@ -1,25 +1,32 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/foundation.dart';
+import '../logging/app_logger.dart';
 import '../storage/secure_storage_service.dart';
 
 class DioClient {
-  final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: _resolveBaseUrl(),
-      // Tăng thời gian chờ lên 30s vì bước gửi mail OTP có thể chậm
-      connectTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 30),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': '*/*', // Chấp nhận mọi loại phản hồi (cả text và json)
-      },
-    ),
-  );
-
+  static final DioClient _instance = DioClient._internal();
+  late final Dio _dio;
   final SecureStorageService _storageService = SecureStorageService();
+  
+  // Callback để AuthProvider lắng nghe lỗi 401
+  VoidCallback? onUnauthorized;
 
-  DioClient() {
+  factory DioClient() => _instance;
+
+  DioClient._internal() {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: _resolveBaseUrl(),
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+        },
+      ),
+    );
+
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
@@ -31,9 +38,7 @@ class DioClient {
 
           bool isPublic = publicEndpoints.any((path) => options.path.contains(path));
 
-          if (isPublic) {
-            options.headers.remove('Authorization');
-          } else {
+          if (!isPublic) {
             final token = await _storageService.getToken();
             if (token != null) {
               options.headers['Authorization'] = 'Bearer $token';
@@ -43,13 +48,10 @@ class DioClient {
           return handler.next(options);
         },
         onError: (DioException e, handler) async {
-          debugPrint('--- DIO ERROR ---');
-          debugPrint('URL: ${e.requestOptions.uri}');
-          debugPrint('Type: ${e.type}'); // In thêm loại lỗi (timeout, connection...)
-          debugPrint('Status: ${e.response?.statusCode}');
-          debugPrint('Response Data: ${e.response?.data}');
-          debugPrint('Error Message: ${e.message}');
-          debugPrint('-----------------');
+          if (e.response?.statusCode == 401) {
+            appLogger.w('401 Unauthorized -> trigger logout callback');
+            onUnauthorized?.call();
+          }
           return handler.next(e);
         },
       ),

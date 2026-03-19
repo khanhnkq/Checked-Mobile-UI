@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/widgets/app_logo.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/skeleton.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
-import '../../../home/presentation/screens/home_screen.dart';
+import '../../../auth/presentation/riverpod_providers.dart';
 
-class CompleteProfileScreen extends StatefulWidget {
+class CompleteProfileScreen extends ConsumerStatefulWidget {
   const CompleteProfileScreen({super.key});
 
   @override
-  State<CompleteProfileScreen> createState() => _CompleteProfileScreenState();
+  ConsumerState<CompleteProfileScreen> createState() => _CompleteProfileScreenState();
 }
 
-class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
+class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   bool _isLoading = false;
 
   void _onComplete() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final authNotifier = ref.read(authProvider.notifier);
     final firstName = _firstNameController.text.trim();
     final lastName = _lastNameController.text.trim();
 
@@ -32,7 +32,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     }
 
     setState(() => _isLoading = true);
-    final success = await authProvider.completeProfile(
+    final success = await authNotifier.completeProfile(
       firstName: firstName,
       lastName: lastName,
       // Username đã được tạo từ bước Register nên không cần gửi lại ở đây nếu Backend không yêu cầu
@@ -41,12 +41,11 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     if (mounted) {
       setState(() => _isLoading = false);
       if (success) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+        context.go('/home');
       } else {
+        final authState = ref.read(authProvider);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(authProvider.errorMessage ?? 'Cập nhật thất bại')),
+          SnackBar(content: Text(authState.errorMessage ?? 'Cập nhật thất bại')),
         );
       }
     }

@@ -10,25 +10,53 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  # state
+  flutter_riverpod: ^2.5.0
+
+  # networking
+  dio: ^5.4.0
+
+  # routing
+  go_router: ^14.0.0
+
+  # storage
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  flutter_secure_storage: ^9.0.0
+
+  # ui
+  google_fonts: ^6.2.0
+  flutter_svg: ^2.0.9
+  flutter_screenutil: ^5.9.0
+
+  # utils
+  logger: ^2.0.2
+  equatable: ^2.0.5
+  intl: ^0.19.0
+  freezed_annotation: ^2.4.4
+
   cupertino_icons: ^1.0.8
-  dio: ^5.8.0
   flutter_dotenv: ^5.2.1
-  flutter_secure_storage: ^9.2.4
   provider: ^6.1.2
   json_annotation: ^4.9.0
   camera: ^0.11.0+2
   lucide_icons: ^0.257.0
-  intl: ^0.19.0
+  image_picker: ^1.1.2
+  flutter_native_splash: ^2.4.7
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  build_runner: ^2.4.15
-  json_serializable: ^6.9.4
+  build_runner: ^2.4.8
+  freezed: ^2.5.0
+  json_serializable: ^6.7.1
+  flutter_launcher_icons: ^0.14.4
 
 
 flutter:
   uses-material-design: true
   assets:
     - .env
+    - assets/icons/

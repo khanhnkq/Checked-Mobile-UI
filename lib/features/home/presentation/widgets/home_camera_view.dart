@@ -1,70 +1,67 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/camera_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../riverpod_providers.dart';
 
-class HomeCameraView extends StatefulWidget {
+class HomeCameraView extends ConsumerStatefulWidget {
   const HomeCameraView({super.key});
 
   @override
-  State<HomeCameraView> createState() => _HomeCameraViewState();
+  ConsumerState<HomeCameraView> createState() => _HomeCameraViewState();
 }
 
-class _HomeCameraViewState extends State<HomeCameraView> {
+class _HomeCameraViewState extends ConsumerState<HomeCameraView> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        context.read<CameraProvider>().initialize();
+        ref.read(cameraProvider.notifier).initialize();
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CameraProvider>(
-      builder: (context, cameraProvider, child) {
-        final controller = cameraProvider.controller;
-        final bool isInitialized = cameraProvider.isInitialized && 
-                                   controller != null && 
-                                   controller.value.isInitialized;
+    final cameraState = ref.watch(cameraProvider);
+    final controller = cameraState.controller;
+    final bool isInitialized = cameraState.isInitialized && 
+                               controller != null && 
+                               controller.value.isInitialized;
 
-        return AspectRatio(
-          aspectRatio: 1.0,
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  if (isInitialized)
-                    _buildCameraPreview(controller)
-                  else
-                    const ColoredBox(color: Colors.black),
-                  
-                  // Top Overlay Buttons
-                  Positioned(
-                    top: 20,
-                    left: 20,
-                    child: _buildCircleButton(Icons.flash_on),
-                  ),
-                  Positioned(
-                    top: 20,
-                    right: 20,
-                    child: _buildCircleButton(Icons.one_x_mobiledata_rounded, text: '1x'),
-                  ),
-                ],
+    return AspectRatio(
+      aspectRatio: 1.0,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(50),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (isInitialized)
+                _buildCameraPreview(controller)
+              else
+                const ColoredBox(color: Colors.black),
+              
+              // Top Overlay Buttons
+              Positioned(
+                top: 20,
+                left: 20,
+                child: _buildCircleButton(Icons.flash_on),
               ),
-            ),
+              Positioned(
+                top: 20,
+                right: 20,
+                child: _buildCircleButton(Icons.one_x_mobiledata_rounded, text: '1x'),
+              ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 

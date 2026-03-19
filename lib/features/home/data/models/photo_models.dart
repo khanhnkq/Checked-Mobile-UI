@@ -57,3 +57,72 @@ class PhotoResponse {
         createdAt: DateTime.parse(json['createdAt'] as String),
       );
 }
+
+class SliceResponse<T> {
+  final List<T> content;
+  final int number;
+  final int size;
+  final bool first;
+  final bool last;
+  final int numberOfElements;
+  final bool empty;
+
+  SliceResponse({
+    required this.content,
+    required this.number,
+    required this.size,
+    required this.first,
+    required this.last,
+    required this.numberOfElements,
+    required this.empty,
+  });
+
+  factory SliceResponse.fromJson(
+    Map<String, dynamic> json,
+    T Function(Map<String, dynamic>) fromJsonT,
+  ) {
+    return SliceResponse<T>(
+      content: (json['content'] as List).map((i) => fromJsonT(i as Map<String, dynamic>)).toList(),
+      number: json['number'] as int,
+      size: json['size'] as int,
+      first: json['first'] as bool,
+      last: json['last'] as bool,
+      numberOfElements: json['numberOfElements'] as int,
+      empty: json['empty'] as bool,
+    );
+  }
+}
+
+class PageResponse<T> extends SliceResponse<T> {
+  final int totalElements;
+  final int totalPages;
+
+  PageResponse({
+    required super.content,
+    required super.number,
+    required super.size,
+    required super.first,
+    required super.last,
+    required super.numberOfElements,
+    required super.empty,
+    required this.totalElements,
+    required this.totalPages,
+  });
+
+  factory PageResponse.fromJson(
+    Map<String, dynamic> json,
+    T Function(Map<String, dynamic>) fromJsonT,
+  ) {
+    return PageResponse<T>(
+      content: (json['content'] as List).map((i) => fromJsonT(i as Map<String, dynamic>)).toList(),
+      number: json['number'] as int,
+      size: json['size'] as int,
+      first: json['first'] as bool,
+      last: json['last'] as bool,
+      numberOfElements: json['numberOfElements'] as int,
+      empty: json['empty'] as bool,
+      totalElements: json['totalElements'] as int,
+      totalPages: json['totalPages'] as int,
+    );
+  }
+}

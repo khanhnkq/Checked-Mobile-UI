@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:locket/features/expense/presentation/screens/expense_screen.dart';
 import '../../../../shared/widgets/capture_button.dart';
 
 class DetailBottomControls extends StatelessWidget {
@@ -37,10 +37,7 @@ class DetailBottomControls extends StatelessWidget {
             IconButton(
               icon: const Icon(LucideIcons.pieChart, color: Colors.white, size: 32),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ExpenseScreen()),
-                );
+                context.push('/expense');
               },
             ),
           ],

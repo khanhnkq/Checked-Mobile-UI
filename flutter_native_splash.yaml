@@ -1,0 +1,8 @@
+flutter_native_splash:
+  color: "#12110B"
+  image: assets/icons/locket_logo.png
+  android_12:
+    image: assets/icons/locket_logo.png
+    color: "#12110B"
+    icon_background_color: "#12110B"
+  fullscreen: true

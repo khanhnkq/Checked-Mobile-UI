@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/storage/secure_storage_service.dart';
 import '../models/login_models.dart';
@@ -24,7 +24,7 @@ class AuthService {
         return authResponse;
       }
     } on DioException catch (e) {
-      debugPrint('LOGIN ERROR: ${e.response?.data}');
+      appLogger.e('LOGIN ERROR', error: e.response?.data ?? e);
       if (e.response?.statusCode == 403) {
         throw Exception('USER_NOT_VERIFIED');
       }
@@ -51,7 +51,7 @@ class AuthService {
         return registerResponse;
       }
     } on DioException catch (e) {
-      debugPrint('REGISTER ERROR: ${e.response?.data}');
+      appLogger.e('REGISTER ERROR', error: e.response?.data ?? e);
       final errorMsg = e.response?.data['message'] ?? 'Đăng ký thất bại';
       throw Exception(errorMsg);
     }
@@ -71,7 +71,7 @@ class AuthService {
         return authResponse;
       }
     } on DioException catch (e) {
-      debugPrint('VERIFY ERROR: ${e.response?.data}');
+      appLogger.e('VERIFY OTP ERROR', error: e.response?.data ?? e);
       final errorMsg = e.response?.data['message'] ?? 'Xác thực OTP thất bại';
       throw Exception(errorMsg);
     }

@@ -1,28 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/widgets/app_logo.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/skeleton.dart';
-import '../../../profile/presentation/screens/complete_profile_screen.dart';
-import '../../../home/presentation/screens/home_screen.dart';
-import '../providers/auth_provider.dart';
+import '../riverpod_providers.dart';
 
-class OtpVerifyScreen extends StatefulWidget {
+class OtpVerifyScreen extends ConsumerStatefulWidget {
   final String email;
 
   const OtpVerifyScreen({super.key, required this.email});
 
   @override
-  State<OtpVerifyScreen> createState() => _OtpVerifyScreenState();
+  ConsumerState<OtpVerifyScreen> createState() => _OtpVerifyScreenState();
 }
 
-class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
+class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
   final TextEditingController _otpController = TextEditingController();
   bool _isLoading = false;
 
   void _verifyOtp() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final authNotifier = ref.read(authProvider.notifier);
     
     if (_otpController.text.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -33,26 +32,21 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
 
     setState(() => _isLoading = true);
     
-    await authProvider.verifyOtp(widget.email, _otpController.text);
+    await authNotifier.verifyOtp(widget.email, _otpController.text);
 
     if (mounted) {
       setState(() => _isLoading = false);
       
-      if (authProvider.status == AuthStatus.authenticated) {
-        if (authProvider.isProfileIncomplete) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const CompleteProfileScreen()),
-          );
+      final authState = ref.read(authProvider);
+      if (authState.status == AuthStatus.authenticated) {
+        if (authState.isProfileIncomplete) {
+          context.go('/complete-profile');
         } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
-          );
+          context.go('/home');
         }
-      } else if (authProvider.errorMessage != null) {
+      } else if (authState.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(authProvider.errorMessage!)),
+          SnackBar(content: Text(authState.errorMessage!)),
         );
       }
     }

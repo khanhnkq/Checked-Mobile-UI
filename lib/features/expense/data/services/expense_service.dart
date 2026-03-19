@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/dio_client.dart';
 import '../models/expense_models.dart';
 
@@ -12,10 +12,10 @@ class ExpenseService {
       final List<dynamic> data = response.data;
       return data.map((json) => ExpenseCategory.fromJson(json)).toList();
     } on DioException catch (e) {
-      debugPrint('GET CATEGORIES ERROR: ${e.response?.data}');
+      appLogger.e('GET CATEGORIES ERROR', error: e.response?.data ?? e);
       throw Exception('Không thể tải danh mục chi tiêu');
     } catch (e) {
-      debugPrint('GET CATEGORIES PARSE ERROR: $e');
+      appLogger.e('GET CATEGORIES PARSE ERROR', error: e);
       throw Exception('Lỗi xử lý dữ liệu danh mục');
     }
   }
@@ -25,14 +25,14 @@ class ExpenseService {
       final response = await _dio.get('/api/v1/expense/budgets/$monthKey');
       return MonthlyBudget.fromJson(response.data);
     } on DioException catch (e) {
-      debugPrint('GET BUDGET ERROR: ${e.response?.data}');
+      appLogger.e('GET BUDGET ERROR', error: e.response?.data ?? e);
       if (e.response?.statusCode == 404) {
         // Trả về budget trống nếu chưa thiết lập
         return MonthlyBudget(monthKey: monthKey, spent: 0, exceeded: false);
       }
       throw Exception('Không thể tải ngân sách');
     } catch (e) {
-      debugPrint('GET BUDGET PARSE ERROR: $e');
+      appLogger.e('GET BUDGET PARSE ERROR', error: e);
       throw Exception('Lỗi xử lý dữ liệu ngân sách');
     }
   }
@@ -48,7 +48,7 @@ class ExpenseService {
       );
       return MonthlyBudget.fromJson(response.data);
     } catch (e) {
-      debugPrint('UPDATE BUDGET ERROR: $e');
+      appLogger.e('UPDATE BUDGET ERROR', error: e);
       throw Exception('Không thể cập nhật ngân sách');
     }
   }
@@ -58,7 +58,7 @@ class ExpenseService {
       final response = await _dio.get('/api/v1/expense/summary', queryParameters: {'monthKey': monthKey});
       return ExpenseSummary.fromJson(response.data);
     } on DioException catch (e) {
-      debugPrint('GET SUMMARY ERROR: ${e.response?.data}');
+      appLogger.e('GET SUMMARY ERROR', error: e.response?.data ?? e);
       if (e.response?.statusCode == 404) {
         return ExpenseSummary(
           monthKey: monthKey,
@@ -70,7 +70,7 @@ class ExpenseService {
       }
       throw Exception('Không thể tải báo cáo chi tiêu');
     } catch (e) {
-      debugPrint('GET SUMMARY PARSE ERROR: $e');
+      appLogger.e('GET SUMMARY PARSE ERROR', error: e);
       throw Exception('Lỗi xử lý dữ liệu báo cáo');
     }
   }
@@ -81,7 +81,7 @@ class ExpenseService {
       final List<dynamic> data = response.data is List ? response.data : (response.data['content'] ?? []);
       return data.map((json) => ExpenseEntry.fromJson(json)).toList();
     } catch (e) {
-      debugPrint('GET ENTRIES ERROR: $e');
+      appLogger.e('GET ENTRIES ERROR', error: e);
       throw Exception('Không thể tải lịch sử chi tiêu');
     }
   }
@@ -97,7 +97,7 @@ class ExpenseService {
         },
       );
     } catch (e) {
-      debugPrint('UPDATE PHOTO EXPENSE ERROR: $e');
+      appLogger.e('UPDATE PHOTO EXPENSE ERROR', error: e);
       throw Exception('Không thể cập nhật thông tin chi tiêu');
     }
   }

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/dio_client.dart';
 import '../models/photo_models.dart';
 
@@ -38,40 +38,41 @@ class PhotoService {
         return PhotoResponse.fromJson(response.data);
       }
     } on DioException catch (e) {
-      debugPrint('UPLOAD PHOTO ERROR: ${e.response?.data}');
+      appLogger.e('UPLOAD PHOTO ERROR', error: e.response?.data ?? e);
       throw Exception(e.response?.data['message'] ?? 'Gửi ảnh thất bại');
     }
     return null;
   }
 
-  Future<List<PhotoResponse>> getFeed() async {
+  Future<SliceResponse<PhotoResponse>> getFeed({int page = 0, int size = 20}) async {
     try {
-      final response = await _dio.get('/api/v1/photos/feed');
-      return _parsePhotoList(response.data);
+      final response = await _dio.get(
+        '/api/v1/photos/feed',
+        queryParameters: {'page': page, 'size': size},
+      );
+      return SliceResponse<PhotoResponse>.fromJson(
+        response.data,
+        (json) => PhotoResponse.fromJson(json),
+      );
     } on DioException catch (e) {
-      debugPrint('GET FEED ERROR: ${e.response?.data}');
+      appLogger.e('GET FEED ERROR', error: e.response?.data ?? e);
       throw Exception(e.response?.data['message'] ?? 'Không thể tải bảng tin');
     }
   }
 
-  Future<List<PhotoResponse>> getMyPhotos() async {
+  Future<PageResponse<PhotoResponse>> getMyPhotos({int page = 0, int size = 20}) async {
     try {
-      final response = await _dio.get('/api/v1/photos/my-photos');
-      return _parsePhotoList(response.data);
+      final response = await _dio.get(
+        '/api/v1/photos/my-photos',
+        queryParameters: {'page': page, 'size': size},
+      );
+      return PageResponse<PhotoResponse>.fromJson(
+        response.data,
+        (json) => PhotoResponse.fromJson(json),
+      );
     } on DioException catch (e) {
-      debugPrint('GET MY PHOTOS ERROR: ${e.response?.data}');
+      appLogger.e('GET MY PHOTOS ERROR', error: e.response?.data ?? e);
       throw Exception(e.response?.data['message'] ?? 'Không thể tải ảnh của tôi');
     }
-  }
-
-  List<PhotoResponse> _parsePhotoList(dynamic data) {
-    if (data == null) return [];
-    List<dynamic> list = [];
-    if (data is List) {
-      list = data;
-    } else if (data is Map) {
-      list = data['content'] ?? data['data'] ?? data['results'] ?? [];
-    }
-    return list.map((json) => PhotoResponse.fromJson(json)).toList();
   }
 }
