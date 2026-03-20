@@ -1,59 +1,36 @@
-class ProfileUpdateRequest {
-  final String? username;
-  final String? firstName;
-  final String? lastName;
-  final String? avatarUrl;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  ProfileUpdateRequest({
-    this.username,
-    this.firstName,
-    this.lastName,
-    this.avatarUrl,
-  });
+part 'profile_models.freezed.dart';
+part 'profile_models.g.dart';
 
-  Map<String, dynamic> toJson() => {
-        if (username != null) 'username': username,
-        if (firstName != null) 'firstName': firstName,
-        if (lastName != null) 'lastName': lastName,
-        if (avatarUrl != null) 'avatarUrl': avatarUrl,
-      };
+@freezed
+class ProfileUpdateRequest with _$ProfileUpdateRequest {
+  const factory ProfileUpdateRequest({
+    String? username,
+    String? firstName,
+    String? lastName,
+    String? avatarUrl,
+  }) = _ProfileUpdateRequest;
+
+  factory ProfileUpdateRequest.fromJson(Map<String, dynamic> json) =>
+      _$ProfileUpdateRequestFromJson(json);
 }
 
-class UserResponse {
-  final String id;
-  final String email;
-  final String username;
-  final String? firstName;
-  final String? lastName;
-  final String displayName;
-  final String? avatarUrl;
-  final bool isVerified;
-  final bool isGoldMember;
-  final bool profileCompleted;
+@freezed
+class UserResponse with _$UserResponse {
+  const factory UserResponse({
+    required String id,
+    required String email,
+    required String username,
+    String? firstName,
+    String? lastName,
+    required String displayName,
+    String? avatarUrl,
+    required bool isVerified,
+    required bool isGoldMember,
+    required bool profileCompleted,
+  }) = _UserResponse;
 
-  UserResponse({
-    required this.id,
-    required this.email,
-    required this.username,
-    this.firstName,
-    this.lastName,
-    required this.displayName,
-    this.avatarUrl,
-    required this.isVerified,
-    required this.isGoldMember,
-    required this.profileCompleted,
-  });
-
-  factory UserResponse.fromJson(Map<String, dynamic> json) => UserResponse(
-        id: json['id'] as String,
-        email: json['email'] as String,
-        username: json['username'] as String,
-        firstName: json['firstName'] as String?,
-        lastName: json['lastName'] as String?,
-        displayName: json['displayName'] as String,
-        avatarUrl: json['avatarUrl'] as String?,
-        isVerified: json['isVerified'] as bool,
-        isGoldMember: json['isGoldMember'] as bool,
-        profileCompleted: json['profileCompleted'] as bool,
-      );
+  factory UserResponse.fromJson(Map<String, dynamic> json) =>
+      _$UserResponseFromJson(json);
 }

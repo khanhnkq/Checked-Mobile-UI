@@ -45,8 +45,8 @@ class PhotoNotifier extends StateNotifier<PhotoState> {
           _fetchMyPhotosUseCase.call(page: state.currentPage),
         ]);
 
-        final feedSlice = results[0];
-        final myPhotosPage = results[1];
+        final feedSlice = results[0] as SliceResponse<PhotoResponse>;
+        final myPhotosPage = results[1] as PageResponse<PhotoResponse>;
 
         final fetchedItems = [...feedSlice.content, ...myPhotosPage.content];
         

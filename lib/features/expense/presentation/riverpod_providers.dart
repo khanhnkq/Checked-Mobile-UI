@@ -1,10 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/service_locator.dart';
 import 'riverpod_notifiers/expense_notifier.dart';
 import 'riverpod_notifiers/expense_state.dart';
 
 final expenseProvider =
     StateNotifierProvider<ExpenseNotifier, ExpenseState>((ref) {
-  return ExpenseNotifier();
+  return ExpenseNotifier(
+    repository: ref.watch(expenseRepositoryProvider),
+  );
 });
 
 // Selector providers for easier consumption

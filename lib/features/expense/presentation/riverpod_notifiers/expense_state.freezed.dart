@@ -46,6 +46,9 @@ abstract class $ExpenseStateCopyWith<$Res> {
     bool isLoading,
     String? errorMessage,
   });
+
+  $ExpenseSummaryCopyWith<$Res>? get currentSummary;
+  $MonthlyBudgetCopyWith<$Res>? get currentBudget;
 }
 
 /// @nodoc
@@ -100,6 +103,34 @@ class _$ExpenseStateCopyWithImpl<$Res, $Val extends ExpenseState>
           as $Val,
     );
   }
+
+  /// Create a copy of ExpenseState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ExpenseSummaryCopyWith<$Res>? get currentSummary {
+    if (_value.currentSummary == null) {
+      return null;
+    }
+
+    return $ExpenseSummaryCopyWith<$Res>(_value.currentSummary!, (value) {
+      return _then(_value.copyWith(currentSummary: value) as $Val);
+    });
+  }
+
+  /// Create a copy of ExpenseState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $MonthlyBudgetCopyWith<$Res>? get currentBudget {
+    if (_value.currentBudget == null) {
+      return null;
+    }
+
+    return $MonthlyBudgetCopyWith<$Res>(_value.currentBudget!, (value) {
+      return _then(_value.copyWith(currentBudget: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -119,6 +150,11 @@ abstract class _$$ExpenseStateImplCopyWith<$Res>
     bool isLoading,
     String? errorMessage,
   });
+
+  @override
+  $ExpenseSummaryCopyWith<$Res>? get currentSummary;
+  @override
+  $MonthlyBudgetCopyWith<$Res>? get currentBudget;
 }
 
 /// @nodoc

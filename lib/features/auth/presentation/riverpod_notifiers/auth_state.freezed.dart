@@ -44,6 +44,9 @@ abstract class $AuthStateCopyWith<$Res> {
     UserResponse? userProfile,
     String? errorMessage,
   });
+
+  $AuthResponseCopyWith<$Res>? get authResponse;
+  $UserResponseCopyWith<$Res>? get userProfile;
 }
 
 /// @nodoc
@@ -98,6 +101,34 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
           as $Val,
     );
   }
+
+  /// Create a copy of AuthState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AuthResponseCopyWith<$Res>? get authResponse {
+    if (_value.authResponse == null) {
+      return null;
+    }
+
+    return $AuthResponseCopyWith<$Res>(_value.authResponse!, (value) {
+      return _then(_value.copyWith(authResponse: value) as $Val);
+    });
+  }
+
+  /// Create a copy of AuthState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UserResponseCopyWith<$Res>? get userProfile {
+    if (_value.userProfile == null) {
+      return null;
+    }
+
+    return $UserResponseCopyWith<$Res>(_value.userProfile!, (value) {
+      return _then(_value.copyWith(userProfile: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -117,6 +148,11 @@ abstract class _$$AuthStateImplCopyWith<$Res>
     UserResponse? userProfile,
     String? errorMessage,
   });
+
+  @override
+  $AuthResponseCopyWith<$Res>? get authResponse;
+  @override
+  $UserResponseCopyWith<$Res>? get userProfile;
 }
 
 /// @nodoc

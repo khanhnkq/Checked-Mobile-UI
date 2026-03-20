@@ -49,7 +49,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       state = state.copyWith(status: AuthStatus.authenticated);
 
-      await _refreshProfile(token: token);
+      // Try to refresh profile with 8 second timeout
+      // If it takes too long, dismiss splash anyway and show main content
+      try {
+        await _refreshProfile(token: token).timeout(
+          const Duration(seconds: 8),
+          onTimeout: () {
+            appLogger.w('Profile refresh timeout - continuing with cached data');
+          },
+        );
+      } catch (e) {
+        appLogger.w('Profile refresh failed during splash: $e');
+      }
     } catch (e) {
       appLogger.e('Error restoring session', error: e);
       await _resetSession();

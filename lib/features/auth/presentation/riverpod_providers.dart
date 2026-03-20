@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/service_locator.dart';
 import 'riverpod_notifiers/auth_notifier.dart';
 import 'riverpod_notifiers/auth_state.dart';
 
@@ -7,7 +8,9 @@ export 'riverpod_notifiers/auth_state.dart' show AuthStatus;
 
 final authProvider =
     StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  final authNotifier = AuthNotifier();
+  final authNotifier = AuthNotifier(
+    repository: ref.watch(authRepositoryProvider),
+  );
   // Auto-restore session on app launch
   authNotifier.restoreSession();
   return authNotifier;

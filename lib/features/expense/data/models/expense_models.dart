@@ -1,140 +1,91 @@
-class ExpenseCategory {
-  final String id;
-  final String name;
-  final String icon;
-  final String color;
-  final bool isDefault;
-  final bool isActive;
+// ignore_for_file: invalid_annotation_target
 
-  ExpenseCategory({
-    required this.id,
-    required this.name,
-    required this.icon,
-    required this.color,
-    required this.isDefault,
-    required this.isActive,
-  });
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  factory ExpenseCategory.fromJson(Map<String, dynamic> json) => ExpenseCategory(
-        id: json['id'] as String? ?? '',
-        name: json['name'] as String? ?? 'Chưa rõ',
-        icon: json['icon'] as String? ?? '',
-        color: json['color'] as String? ?? '#FFFFFF',
-        isDefault: json['isDefault'] as bool? ?? false,
-        isActive: json['isActive'] as bool? ?? true,
-      );
+part 'expense_models.freezed.dart';
+part 'expense_models.g.dart';
+
+double _toDoubleOrZero(Object? value) => (value as num?)?.toDouble() ?? 0;
+double? _toNullableDouble(Object? value) => (value as num?)?.toDouble();
+DateTime _dateTimeOrNowFromJson(Object? value) {
+  if (value is String && value.isNotEmpty) {
+    return DateTime.parse(value);
+  }
+  return DateTime.now();
 }
 
-class MonthlyBudget {
-  final String monthKey;
-  final double? amountLimit;
-  final int? alertThresholdPct;
-  final double spent;
-  final double? remaining;
-  final bool exceeded;
+@freezed
+class ExpenseCategory with _$ExpenseCategory {
+  const factory ExpenseCategory({
+    @JsonKey(defaultValue: '') required String id,
+    @JsonKey(defaultValue: 'Chưa rõ') required String name,
+    @JsonKey(defaultValue: '') required String icon,
+    @JsonKey(defaultValue: '#FFFFFF') required String color,
+    @JsonKey(defaultValue: false) required bool isDefault,
+    @JsonKey(defaultValue: true) required bool isActive,
+  }) = _ExpenseCategory;
 
-  MonthlyBudget({
-    required this.monthKey,
-    this.amountLimit,
-    this.alertThresholdPct,
-    required this.spent,
-    this.remaining,
-    required this.exceeded,
-  });
-
-  factory MonthlyBudget.fromJson(Map<String, dynamic> json) => MonthlyBudget(
-        monthKey: json['monthKey'] as String? ?? '',
-        amountLimit: (json['amountLimit'] as num?)?.toDouble(),
-        alertThresholdPct: json['alertThresholdPct'] as int?,
-        spent: (json['spent'] as num? ?? 0).toDouble(),
-        remaining: (json['remaining'] as num?)?.toDouble(),
-        exceeded: json['exceeded'] as bool? ?? false,
-      );
+  factory ExpenseCategory.fromJson(Map<String, dynamic> json) =>
+      _$ExpenseCategoryFromJson(json);
 }
 
-class ExpenseSummary {
-  final String monthKey;
-  final double totalSpent;
-  final double? budgetLimit;
-  final double? remaining;
-  final bool budgetExceeded;
-  final double percentUsed;
-  final List<CategorySummary> byCategory;
+@freezed
+class MonthlyBudget with _$MonthlyBudget {
+  const factory MonthlyBudget({
+    @JsonKey(defaultValue: '') required String monthKey,
+    @JsonKey(fromJson: _toNullableDouble) double? amountLimit,
+    int? alertThresholdPct,
+    @JsonKey(fromJson: _toDoubleOrZero) required double spent,
+    @JsonKey(fromJson: _toNullableDouble) double? remaining,
+    @JsonKey(defaultValue: false) required bool exceeded,
+  }) = _MonthlyBudget;
 
-  ExpenseSummary({
-    required this.monthKey,
-    required this.totalSpent,
-    this.budgetLimit,
-    this.remaining,
-    required this.budgetExceeded,
-    required this.percentUsed,
-    required this.byCategory,
-  });
-
-  factory ExpenseSummary.fromJson(Map<String, dynamic> json) => ExpenseSummary(
-        monthKey: json['monthKey'] as String? ?? '',
-        totalSpent: (json['totalSpent'] as num? ?? 0).toDouble(),
-        budgetLimit: (json['budgetLimit'] as num?)?.toDouble(),
-        remaining: (json['remaining'] as num?)?.toDouble(),
-        budgetExceeded: json['budgetExceeded'] as bool? ?? false,
-        percentUsed: (json['percentUsed'] as num? ?? 0).toDouble(),
-        byCategory: (json['byCategory'] as List<dynamic>?)
-                ?.map((e) => CategorySummary.fromJson(e as Map<String, dynamic>))
-                .toList() ??
-            [],
-      );
+  factory MonthlyBudget.fromJson(Map<String, dynamic> json) =>
+      _$MonthlyBudgetFromJson(json);
 }
 
-class CategorySummary {
-  final String categoryId;
-  final String categoryName;
-  final double totalAmount;
+@freezed
+class ExpenseSummary with _$ExpenseSummary {
+  const factory ExpenseSummary({
+    @JsonKey(defaultValue: '') required String monthKey,
+    @JsonKey(fromJson: _toDoubleOrZero) required double totalSpent,
+    @JsonKey(fromJson: _toNullableDouble) double? budgetLimit,
+    @JsonKey(fromJson: _toNullableDouble) double? remaining,
+    @JsonKey(defaultValue: false) required bool budgetExceeded,
+    @JsonKey(fromJson: _toDoubleOrZero) required double percentUsed,
+    @JsonKey(defaultValue: <CategorySummary>[]) required List<CategorySummary> byCategory,
+  }) = _ExpenseSummary;
 
-  CategorySummary({
-    required this.categoryId,
-    required this.categoryName,
-    required this.totalAmount,
-  });
-
-  factory CategorySummary.fromJson(Map<String, dynamic> json) => CategorySummary(
-        categoryId: json['categoryId'] as String? ?? '',
-        categoryName: json['categoryName'] as String? ?? 'Chưa rõ',
-        totalAmount: (json['totalAmount'] as num? ?? 0).toDouble(),
-      );
+  factory ExpenseSummary.fromJson(Map<String, dynamic> json) =>
+      _$ExpenseSummaryFromJson(json);
 }
 
-class ExpenseEntry {
-  final String photoId;
-  final String imageUrl;
-  final String thumbnailUrl;
-  final double amount;
-  final String? note;
-  final String? categoryId;
-  final String? categoryName;
-  final DateTime takenAt;
-  final DateTime createdAt;
+@freezed
+class CategorySummary with _$CategorySummary {
+  const factory CategorySummary({
+    @JsonKey(defaultValue: '') required String categoryId,
+    @JsonKey(defaultValue: 'Chưa rõ') required String categoryName,
+    @JsonKey(fromJson: _toDoubleOrZero) required double totalAmount,
+  }) = _CategorySummary;
 
-  ExpenseEntry({
-    required this.photoId,
-    required this.imageUrl,
-    required this.thumbnailUrl,
-    required this.amount,
-    this.note,
-    this.categoryId,
-    this.categoryName,
-    required this.takenAt,
-    required this.createdAt,
-  });
+  factory CategorySummary.fromJson(Map<String, dynamic> json) =>
+      _$CategorySummaryFromJson(json);
+}
 
-  factory ExpenseEntry.fromJson(Map<String, dynamic> json) => ExpenseEntry(
-        photoId: json['photoId'] as String? ?? '',
-        imageUrl: json['imageUrl'] as String? ?? '',
-        thumbnailUrl: json['thumbnailUrl'] as String? ?? '',
-        amount: (json['amount'] as num? ?? 0).toDouble(),
-        note: json['note'] as String?,
-        categoryId: json['categoryId'] as String?,
-        categoryName: json['categoryName'] as String?,
-        takenAt: json['takenAt'] != null ? DateTime.parse(json['takenAt'] as String) : DateTime.now(),
-        createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt'] as String) : DateTime.now(),
-      );
+@freezed
+class ExpenseEntry with _$ExpenseEntry {
+  const factory ExpenseEntry({
+    @JsonKey(defaultValue: '') required String photoId,
+    @JsonKey(defaultValue: '') required String imageUrl,
+    @JsonKey(defaultValue: '') required String thumbnailUrl,
+    @JsonKey(fromJson: _toDoubleOrZero) required double amount,
+    String? note,
+    String? categoryId,
+    String? categoryName,
+    @JsonKey(fromJson: _dateTimeOrNowFromJson) required DateTime takenAt,
+    @JsonKey(fromJson: _dateTimeOrNowFromJson) required DateTime createdAt,
+  }) = _ExpenseEntry;
+
+  factory ExpenseEntry.fromJson(Map<String, dynamic> json) =>
+      _$ExpenseEntryFromJson(json);
 }

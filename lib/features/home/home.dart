@@ -7,8 +7,7 @@ export 'domain/usecases/fetch_feed_photos_usecase.dart';
 export 'domain/usecases/fetch_my_photos_usecase.dart';
 export 'domain/usecases/initialize_camera_usecase.dart';
 export 'domain/usecases/send_captured_photo_usecase.dart';
-export 'presentation/providers/camera_provider.dart';
-export 'presentation/providers/photo_provider.dart';
+export 'presentation/riverpod_providers.dart';
 export 'presentation/viewmodels/camera_view_model.dart';
 export 'presentation/viewmodels/home_feed_view_model.dart';
 

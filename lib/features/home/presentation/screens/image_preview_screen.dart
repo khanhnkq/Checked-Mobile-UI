@@ -1,31 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:locket/features/expense/data/models/expense_models.dart';
 import '../widgets/image_preview_top_bar.dart';
 import '../widgets/image_preview_view.dart';
 import '../widgets/image_preview_bottom_actions.dart';
 import '../widgets/image_preview_user_selection.dart';
-import '../providers/camera_provider.dart';
+import '../riverpod_providers.dart';
+import '../../../../shared/widgets/measure_size.dart';
 
-class ImagePreviewScreen extends StatefulWidget {
+class ImagePreviewScreen extends ConsumerStatefulWidget {
   final String imagePath;
 
   const ImagePreviewScreen({super.key, required this.imagePath});
 
   @override
-  State<ImagePreviewScreen> createState() => _ImagePreviewScreenState();
+  ConsumerState<ImagePreviewScreen> createState() => _ImagePreviewScreenState();
 }
 
-class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
+class _ImagePreviewScreenState extends ConsumerState<ImagePreviewScreen> {
   final TextEditingController _amountController = TextEditingController();
   ExpenseCategory? _selectedCategory;
+  double _topOverlayHeight = 0;
+  double _bottomOverlayHeight = 0;
+
+  void _setTopOverlayHeight(double height) {
+    if ((_topOverlayHeight - height).abs() < 0.5) return;
+    setState(() => _topOverlayHeight = height);
+  }
+
+  void _setBottomOverlayHeight(double height) {
+    if ((_bottomOverlayHeight - height).abs() < 0.5) return;
+    setState(() => _bottomOverlayHeight = height);
+  }
 
   void _onSend() async {
-    final cameraProvider = context.read<CameraProvider>();
+    final cameraNotifier = ref.read(cameraProvider.notifier);
     try {
       final amount = double.tryParse(_amountController.text);
-      final response = await cameraProvider.sendCapturedPhoto(
+      final response = await cameraNotifier.sendCapturedPhoto(
         filePath: widget.imagePath,
         amount: amount,
         categoryId: _selectedCategory?.id,
@@ -43,7 +56,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
         final fallback = e.toString().replaceAll('Exception: ', '');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(cameraProvider.sendErrorMessage ?? fallback),
+            content: Text(ref.read(cameraProvider).sendErrorMessage ?? fallback),
           ),
         );
       }
@@ -58,6 +71,8 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isSending = ref.watch(isSendingProvider);
+
     return Scaffold(
       backgroundColor: const Color(0xFF12110B),
       resizeToAvoidBottomInset: false,
@@ -68,6 +83,8 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
             child: ImagePreviewView(
               imagePath: widget.imagePath,
               amountController: _amountController,
+              topOverlayHeight: _topOverlayHeight,
+              bottomOverlayHeight: _bottomOverlayHeight,
               onCategoryChanged: (cat) {
                 setState(() => _selectedCategory = cat);
               },
@@ -79,12 +96,15 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
             top: 0,
             left: 0,
             right: 0,
-            child: SafeArea(
-              bottom: false,
-              child: ImagePreviewTopBar(
-                onDownload: () {
-                  // TODO: Implement download logic
-                },
+            child: MeasureSize(
+              onChange: (size) => _setTopOverlayHeight(size.height),
+              child: SafeArea(
+                bottom: false,
+                child: ImagePreviewTopBar(
+                  onDownload: () {
+                    // TODO: Implement download logic
+                  },
+                ),
               ),
             ),
           ),
@@ -94,45 +114,41 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
             bottom: 0,
             left: 0,
             right: 0,
-            child: SafeArea(
-              top: false,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ImagePreviewBottomActions(
-                    onClose: () => context.pop(),
-                    onSend: _onSend,
-                    onTypeText: () {
-                      // Focus amount controller or other text logic
-                    },
-                  ),
-                  const SizedBox(height: 40),
-                  const ImagePreviewUserSelection(),
-                  const SizedBox(height: 20),
-                ],
+            child: MeasureSize(
+              onChange: (size) => _setBottomOverlayHeight(size.height),
+              child: SafeArea(
+                top: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ImagePreviewBottomActions(
+                      onClose: () => context.pop(),
+                      onSend: _onSend,
+                      onTypeText: () {
+                        // Focus amount controller or other text logic
+                      },
+                    ),
+                    const SizedBox(height: 40),
+                    const ImagePreviewUserSelection(),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
             ),
           ),
 
           // 4. Sending overlay
-          Selector<CameraProvider, bool>(
-            selector: (_, provider) => provider.isSending,
-            builder: (context, isSending, _) {
-              if (!isSending) {
-                return const SizedBox.shrink();
-              }
-              return Positioned.fill(
-                child: Container(
-                  color: Colors.black54,
-                  child: const Center(
-                    child: CircularProgressIndicator(
-                      color: Color(0xFFFFD35A),
-                    ),
+          if (isSending)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black54,
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xFFFFD35A),
                   ),
                 ),
-              );
-            },
-          ),
+              ),
+            ),
         ],
       ),
     );

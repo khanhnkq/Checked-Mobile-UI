@@ -1,14 +1,15 @@
-class VerifyOtpRequest {
-  final String email;
-  final String otp;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  VerifyOtpRequest({
-    required this.email,
-    required this.otp,
-  });
+part 'otp_models.freezed.dart';
+part 'otp_models.g.dart';
 
-  Map<String, dynamic> toJson() => {
-        'email': email,
-        'otp': otp,
-      };
+@freezed
+class VerifyOtpRequest with _$VerifyOtpRequest {
+  const factory VerifyOtpRequest({
+    required String email,
+    required String otp,
+  }) = _VerifyOtpRequest;
+
+  factory VerifyOtpRequest.fromJson(Map<String, dynamic> json) =>
+      _$VerifyOtpRequestFromJson(json);
 }

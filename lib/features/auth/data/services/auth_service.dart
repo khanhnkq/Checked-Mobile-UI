@@ -7,8 +7,14 @@ import '../models/register_models.dart';
 import '../models/otp_models.dart';
 
 class AuthService {
-  final Dio _dio = DioClient().dio;
-  final SecureStorageService _storageService = SecureStorageService();
+  AuthService({
+    Dio? dio,
+    SecureStorageService? storageService,
+  })  : _dio = dio ?? DioClient().dio,
+        _storageService = storageService ?? SecureStorageService();
+
+  final Dio _dio;
+  final SecureStorageService _storageService;
 
   Future<AuthResponse?> login(String identifier, String password) async {
     try {

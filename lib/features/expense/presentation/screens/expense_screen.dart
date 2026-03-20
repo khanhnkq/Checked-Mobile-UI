@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:locket/features/expense/presentation/providers/expense_provider.dart';
 import 'package:locket/features/expense/data/models/expense_models.dart';
+import 'package:locket/features/expense/presentation/riverpod_providers.dart';
 
-class ExpenseScreen extends StatefulWidget {
+class ExpenseScreen extends ConsumerStatefulWidget {
   const ExpenseScreen({super.key});
 
   @override
-  State<ExpenseScreen> createState() => _ExpenseScreenState();
+  ConsumerState<ExpenseScreen> createState() => _ExpenseScreenState();
 }
 
-class _ExpenseScreenState extends State<ExpenseScreen> {
+class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
   late String _currentMonthKey;
   final _currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫', decimalDigits: 0);
 
@@ -21,12 +21,14 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
     super.initState();
     _currentMonthKey = DateFormat('yyyyMM').format(DateTime.now());
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ExpenseProvider>().fetchMonthlyData(_currentMonthKey);
+      ref.read(expenseProvider.notifier).fetchMonthlyData(_currentMonthKey);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final expenseState = ref.watch(expenseProvider);
+
     return Scaffold(
       backgroundColor: const Color(0xFF12110B),
       appBar: AppBar(
@@ -39,43 +41,44 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Consumer<ExpenseProvider>(
-        builder: (context, provider, child) {
-          if (provider.isLoading && provider.currentSummary == null) {
-            return const Center(child: CircularProgressIndicator(color: Color(0xFFFFD35A)));
-          }
-
-          final summary = provider.currentSummary;
-          if (summary == null) return const SizedBox.shrink();
-
-          return RefreshIndicator(
-            onRefresh: () => provider.fetchMonthlyData(_currentMonthKey),
-            color: const Color(0xFFFFD35A),
-            backgroundColor: const Color(0xFF2C2B26),
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  _buildOverviewCard(summary, provider),
-                  const SizedBox(height: 24),
-                  const _SectionTitle(title: 'Hạng mục chi tiêu'),
-                  _buildCategoryCard(summary),
-                  const SizedBox(height: 24),
-                  const _SectionTitle(title: 'Lịch sử giao dịch'),
-                  _buildTransactionList(provider),
-                  const SizedBox(height: 40),
-                ],
-              ),
-            ),
+      body: () {
+        if (expenseState.isLoading && expenseState.currentSummary == null) {
+          return const Center(
+            child: CircularProgressIndicator(color: Color(0xFFFFD35A)),
           );
-        },
-      ),
+        }
+
+        final summary = expenseState.currentSummary;
+        if (summary == null) return const SizedBox.shrink();
+
+        return RefreshIndicator(
+          onRefresh: () =>
+              ref.read(expenseProvider.notifier).fetchMonthlyData(_currentMonthKey),
+          color: const Color(0xFFFFD35A),
+          backgroundColor: const Color(0xFF2C2B26),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                _buildOverviewCard(summary),
+                const SizedBox(height: 24),
+                const _SectionTitle(title: 'Hạng mục chi tiêu'),
+                _buildCategoryCard(summary),
+                const SizedBox(height: 24),
+                const _SectionTitle(title: 'Lịch sử giao dịch'),
+                _buildTransactionList(expenseState.entries),
+                const SizedBox(height: 40),
+              ],
+            ),
+          ),
+        );
+      }(),
     );
   }
 
-  Widget _buildOverviewCard(ExpenseSummary summary, ExpenseProvider provider) {
+  Widget _buildOverviewCard(ExpenseSummary summary) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(24),
@@ -89,7 +92,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
               IconButton(
                 visualDensity: VisualDensity.compact,
                 icon: const Icon(LucideIcons.settings2, color: Colors.grey, size: 18),
-                onPressed: () => _showUpdateBudgetDialog(context, provider),
+                onPressed: () => _showUpdateBudgetDialog(context),
               ),
             ],
           ),
@@ -143,8 +146,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
     );
   }
 
-  Widget _buildTransactionList(ExpenseProvider provider) {
-    final entries = provider.entries;
+  Widget _buildTransactionList(List<ExpenseEntry> entries) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -166,8 +168,11 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
     );
   }
 
-  void _showUpdateBudgetDialog(BuildContext context, ExpenseProvider provider) {
-    final controller = TextEditingController(text: provider.currentBudget?.amountLimit?.toInt().toString() ?? '');
+  void _showUpdateBudgetDialog(BuildContext context) {
+    final currentBudget = ref.read(expenseCurrentBudgetProvider);
+    final controller = TextEditingController(
+      text: currentBudget?.amountLimit?.toInt().toString() ?? '',
+    );
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -186,7 +191,14 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
           TextButton(
             onPressed: () {
               final limit = double.tryParse(controller.text);
-              if (limit != null) { provider.updateBudget(_currentMonthKey, limit, 80); Navigator.pop(context); }
+              if (limit != null) {
+                ref.read(expenseProvider.notifier).updateBudget(
+                      _currentMonthKey,
+                      limit,
+                      80,
+                    );
+                Navigator.pop(context);
+              }
             },
             child: const Text('Lưu', style: TextStyle(color: Color(0xFFFFD35A))),
           ),

@@ -7,7 +7,7 @@ class AppLogo extends StatelessWidget {
   
   const AppLogo({
     super.key,
-    this.size = 140,
+    this.size = 120,
     this.showShadow = true,
   });
 
@@ -17,25 +17,21 @@ class AppLogo extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: const Color(0xFFFFD35A),
-        borderRadius: BorderRadius.circular(size * 0.3),
         boxShadow: showShadow
             ? [
                 BoxShadow(
                   color: const Color(0xFFFFD35A).withValues(alpha: 0.2),
                   blurRadius: 40,
-                  spreadRadius: 15,
+                  spreadRadius: 12,
                 ),
               ]
             : null,
       ),
-      child: Center(
-        child: SvgPicture.asset(
-          'assets/icons/locket_logo.svg',
-          width: size,
-          height: size,
-          fit: BoxFit.contain,
-        ),
+      child: SvgPicture.asset(
+        'assets/logo/app_logo.svg',
+        width: size,
+        height: size,
+        fit: BoxFit.contain,
       ),
     );
   }

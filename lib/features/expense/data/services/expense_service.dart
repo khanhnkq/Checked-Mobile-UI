@@ -4,7 +4,9 @@ import '../../../../core/network/dio_client.dart';
 import '../models/expense_models.dart';
 
 class ExpenseService {
-  final Dio _dio = DioClient().dio;
+  ExpenseService({Dio? dio}) : _dio = dio ?? DioClient().dio;
+
+  final Dio _dio;
 
   Future<List<ExpenseCategory>> getCategories() async {
     try {

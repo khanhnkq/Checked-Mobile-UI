@@ -1,40 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:provider/provider.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../auth/presentation/riverpod_providers.dart';
 import '../../../../shared/widgets/painters.dart';
 import 'home_top_bar.dart';
-import '../providers/photo_provider.dart';
+import '../riverpod_notifiers/photo_state.dart';
+import '../riverpod_providers.dart';
 
-class HistoryTopBar extends StatelessWidget {
+class HistoryTopBar extends ConsumerWidget {
   const HistoryTopBar({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Chỉ rebuild khi currentFilter, displayName hoặc avatarUrl thay đổi
-    return Selector<PhotoProvider, PhotoFilter>(
-      selector: (_, p) => p.currentFilter,
-      builder: (context, currentFilter, child) {
-        return Selector<AuthProvider, ({String? displayName, String? avatarUrl})>(
-          selector: (_, auth) => (
-            displayName: auth.userProfile?.firstName,
-            avatarUrl: auth.userProfile?.avatarUrl,
-          ),
-          builder: (context, user, child) {
-            return HomeTopBar.shared(
-              center: _HistoryFilterPill(
-                currentFilter: currentFilter,
-                userDisplayName: user.displayName,
-                userAvatarUrl: user.avatarUrl,
-                onFilterSelected: (filter) =>
-                    context.read<PhotoProvider>().setFilter(filter),
-              ),
-              useProfileLeading: true,
-              useMessageTrailing: true,
-            );
-          },
-        );
-      },
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentFilter = ref.watch(photoFilterProvider);
+    final user = ref.watch(userProfileProvider);
+
+    return HomeTopBar.shared(
+      center: _HistoryFilterPill(
+        currentFilter: currentFilter,
+        userDisplayName: user?.firstName,
+        userAvatarUrl: user?.avatarUrl,
+        onFilterSelected: (filter) {
+          ref.read(photoProvider.notifier).setFilter(filter);
+          ref.read(photoProvider.notifier).fetchPhotos(filter: filter);
+        },
+      ),
+      useProfileLeading: true,
+      useMessageTrailing: true,
     );
   }
 }

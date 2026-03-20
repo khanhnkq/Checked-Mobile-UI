@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:provider/provider.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
-import '../../../profile/presentation/screens/profile_screen.dart';
+import '../../../auth/presentation/riverpod_providers.dart';
 import '../../../../shared/widgets/circle_icon_button.dart';
 import '../../../../shared/widgets/painters.dart';
 
-class HomeTopBar extends StatelessWidget {
+class HomeTopBar extends ConsumerWidget {
   final Widget? leading;
   final Widget? center;
   final Widget? trailing;
@@ -41,22 +40,21 @@ class HomeTopBar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Selector<AuthProvider, String?>(
-      selector: (_, auth) => auth.userProfile?.avatarUrl,
-      builder: (context, avatarUrl, child) => _HomeTopBarFrame(
-        backgroundColor: backgroundColor,
-        padding: padding,
-        leading: leading ??
-            (useProfileLeading
-                ? _HomeTopBarProfileButton(avatarUrl: avatarUrl)
-                : const _HomeTopBarSlot()),
-        center: center ?? _HomeTopBarFriendsPill(friendsCount: friendsCount),
-        trailing: trailing ??
-            (useMessageTrailing
-                ? const _HomeTopBarMessageButton()
-                : const _HomeTopBarSlot()),
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final avatarUrl = ref.watch(userProfileProvider)?.avatarUrl;
+
+    return _HomeTopBarFrame(
+      backgroundColor: backgroundColor,
+      padding: padding,
+      leading: leading ??
+          (useProfileLeading
+              ? _HomeTopBarProfileButton(avatarUrl: avatarUrl)
+              : const _HomeTopBarSlot()),
+      center: center ?? _HomeTopBarFriendsPill(friendsCount: friendsCount),
+      trailing: trailing ??
+          (useMessageTrailing
+              ? const _HomeTopBarMessageButton()
+              : const _HomeTopBarSlot()),
     );
   }
 }

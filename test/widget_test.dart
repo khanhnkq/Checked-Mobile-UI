@@ -1,12 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
 
 import 'package:locket/main.dart';
-import 'package:locket/features/auth/presentation/providers/auth_provider.dart';
-import 'package:locket/features/home/presentation/providers/camera_provider.dart';
-import 'package:locket/features/home/presentation/providers/photo_provider.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -33,14 +29,7 @@ void main() {
 
   testWidgets('renders login screen', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => AuthProvider()),
-          ChangeNotifierProvider(create: (_) => CameraProvider()),
-          ChangeNotifierProvider(create: (_) => PhotoProvider()),
-        ],
-        child: const ProviderScope(child: MyApp()),
-      ),
+      const ProviderScope(child: MyApp()),
     );
 
     await tester.pump();

@@ -1,20 +1,17 @@
-class ErrorResponse {
-  final String timestamp;
-  final int status;
-  final String message;
-  final String path;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  ErrorResponse({
-    required this.timestamp,
-    required this.status,
-    required this.message,
-    required this.path,
-  });
+part 'error_models.freezed.dart';
+part 'error_models.g.dart';
 
-  factory ErrorResponse.fromJson(Map<String, dynamic> json) => ErrorResponse(
-        timestamp: json['timestamp'] as String,
-        status: json['status'] as int,
-        message: json['message'] as String,
-        path: json['path'] as String,
-      );
+@freezed
+class ErrorResponse with _$ErrorResponse {
+  const factory ErrorResponse({
+    required String timestamp,
+    required int status,
+    required String message,
+    required String path,
+  }) = _ErrorResponse;
+
+  factory ErrorResponse.fromJson(Map<String, dynamic> json) =>
+      _$ErrorResponseFromJson(json);
 }

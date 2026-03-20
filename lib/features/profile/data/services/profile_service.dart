@@ -4,7 +4,9 @@ import '../../../../core/network/dio_client.dart';
 import '../models/profile_models.dart';
 
 class ProfileService {
-  final Dio _dio = DioClient().dio;
+  ProfileService({Dio? dio}) : _dio = dio ?? DioClient().dio;
+
+  final Dio _dio;
 
   Future<UserResponse?> getMe() async {
     try {

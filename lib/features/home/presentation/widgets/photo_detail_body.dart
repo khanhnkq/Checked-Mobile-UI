@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'; // Import ScreenUtil
 import '../../data/models/photo_models.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../auth/presentation/riverpod_providers.dart';
 
-class PhotoDetailBody extends StatelessWidget {
+class PhotoDetailBody extends ConsumerWidget {
   final PhotoResponse photo;
   final double? topSpacing;
 
@@ -25,9 +25,9 @@ class PhotoDetailBody extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final authProvider = context.read<AuthProvider>();
-    final isMe = photo.senderId == authProvider.currentUserId;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentUserId = ref.watch(currentUserIdProvider);
+    final isMe = photo.senderId == currentUserId;
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
 
     // Sử dụng ScreenUtil để tính toán spacing tự động co giãn theo tỉ lệ máy

@@ -4,8 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:provider/provider.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../auth/presentation/riverpod_providers.dart';
 import '../providers/app_settings_provider.dart';
 import '../../data/services/profile_service.dart';
 
@@ -37,7 +36,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       final updatedUser = await _profileService.updateAvatar(image.path);
       if (updatedUser != null && mounted) {
         // Refresh session to update global userProfile state
-        await context.read<AuthProvider>().restoreSession();
+        await ref.read(authProvider.notifier).restoreSession();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Cập nhật ảnh đại diện thành công')),
         );
@@ -54,8 +53,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   void _showUpdateNameDialog(BuildContext context) {
-    final authProvider = context.read<AuthProvider>();
-    final user = authProvider.userProfile;
+    final authState = ref.read(authProvider);
+    final authNotifier = ref.read(authProvider.notifier);
+    final user = authState.userProfile;
     final firstNameController = TextEditingController(text: user?.firstName);
     final lastNameController = TextEditingController(text: user?.lastName);
 
@@ -95,7 +95,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           TextButton(
             onPressed: () async {
-              final success = await authProvider.completeProfile(
+              final success = await authNotifier.completeProfile(
                 firstName: firstNameController.text.trim(),
                 lastName: lastNameController.text.trim(),
               );
@@ -115,7 +115,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthProvider>().userProfile;
+    final user = ref.watch(userProfileProvider);
     final settings = ref.watch(appSettingsProvider);
     
     return Scaffold(
@@ -269,9 +269,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             const SizedBox(height: 32),
             Center(
               child: TextButton(
-                onPressed: () {
-                  context.read<AuthProvider>().logout();
-                  // AuthGate in main.dart handles navigation back to LoginScreen
+                onPressed: () async {
+                  await ref.read(authProvider.notifier).logout();
+                  if (!mounted) return;
+                  context.go('/login');
                 },
                 child: const Text(
                   'Đăng xuất',

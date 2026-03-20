@@ -4,7 +4,9 @@ import '../../../../core/network/dio_client.dart';
 import '../models/photo_models.dart';
 
 class PhotoService {
-  final Dio _dio = DioClient().dio;
+  PhotoService({Dio? dio}) : _dio = dio ?? DioClient().dio;
+
+  final Dio _dio;
 
   Future<PhotoResponse?> uploadPhoto({
     required String filePath,
@@ -52,7 +54,7 @@ class PhotoService {
       );
       return SliceResponse<PhotoResponse>.fromJson(
         response.data,
-        (json) => PhotoResponse.fromJson(json),
+        (json) => PhotoResponse.fromJson(json as Map<String, dynamic>),
       );
     } on DioException catch (e) {
       appLogger.e('GET FEED ERROR', error: e.response?.data ?? e);
@@ -68,7 +70,7 @@ class PhotoService {
       );
       return PageResponse<PhotoResponse>.fromJson(
         response.data,
-        (json) => PhotoResponse.fromJson(json),
+        (json) => PhotoResponse.fromJson(json as Map<String, dynamic>),
       );
     } on DioException catch (e) {
       appLogger.e('GET MY PHOTOS ERROR', error: e.response?.data ?? e);
