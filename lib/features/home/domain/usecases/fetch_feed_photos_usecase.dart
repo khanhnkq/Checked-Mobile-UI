@@ -6,8 +6,11 @@ class FetchFeedPhotosUseCase {
 
   final PhotoRepository _repository;
 
-  Future<SliceResponse<PhotoResponse>> call({int page = 0, int size = 20}) {
-    return _repository.getFeed(page: page, size: size);
+  Future<SliceResponse<PhotoResponse>> call({
+    int page = 0,
+    int size = 20,
+    String? friendId,
+  }) {
+    return _repository.getFeed(page: page, size: size, friendId: friendId);
   }
 }
-

@@ -182,8 +182,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
     required String lastName,
     String? username,
   }) async {
-    state = state.copyWith(status: AuthStatus.loading);
-
     try {
       final response = await _completeProfileUseCase.call(
         firstName: firstName,
@@ -196,7 +194,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
         if (token != null && token.isNotEmpty) {
           await _refreshProfile(token: token);
         }
-        state = state.copyWith(status: AuthStatus.authenticated);
         return true;
       }
     } catch (e) {
@@ -204,7 +201,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
         errorMessage: e.toString().replaceAll('Exception: ', ''),
       );
     }
-    state = state.copyWith(status: AuthStatus.authenticated);
     return false;
   }
 

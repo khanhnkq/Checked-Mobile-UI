@@ -140,7 +140,7 @@ class _HistoryGridScreenState extends ConsumerState<HistoryGridScreen> {
                 ),
                 footer: photoState.hasMore
                     ? const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
+                        padding: EdgeInsets.symmetric(vertical: 16),
                         child: Center(
                           child: CircularProgressIndicator(
                             color: Color(0xFFFFD35A),

@@ -36,7 +36,7 @@ Authorization: Bearer <JWT_TOKEN>
 - `POST /api/v1/auth/login`
 
 ### Protected endpoints (can token)
-- Tat ca endpoint con lai trong `users`, `photos`, `expense`.
+- Tat ca endpoint con lai trong `users`, `photos`, `expense`, `friend-invite-links`, `friendships`.
 
 ---
 
@@ -148,7 +148,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
-  "emailOrUsername": "khanhnguyenkim30825@gmail.com",
+  "identifier": "khanhnguyenkim30825@gmail.com",
   "password": "SnapWidget@123"
 }
 ```
@@ -254,7 +254,148 @@ multipart/form-data
 
 ---
 
-## 6) Photo module
+## 6) Friendship invite link module (Sprint 1)
+
+Tat ca endpoint friend invite link deu la protected endpoint.
+
+## `POST /api/v1/friend-invite-links`
+
+Tao link moi (dong thoi revoke link active cu neu co).
+
+### Request
+
+```json
+{
+  "ttlMinutes": 10080
+}
+```
+
+`ttlMinutes` optional, mac dinh 10080 (7 ngay), range hop le: `10..43200`.
+
+### Success
+- `201 Created` -> `FriendInviteLinkResponse`
+
+### `FriendInviteLinkResponse`
+
+```json
+{
+  "id": "uuid",
+  "inviteUrl": "https://locket-clone.app/friend/accept?token=...",
+  "tokenPreview": "abcdefghij...",
+  "maxUses": 50,
+  "usedCount": 0,
+  "expiresAt": "2026-03-31T10:00:00",
+  "revokedAt": null,
+  "status": "ACTIVE"
+}
+```
+
+### Loi thuong gap
+- `400`: TTL khong hop le
+- `404`: user khong ton tai
+
+---
+
+## `GET /api/v1/friend-invite-links/current`
+
+Lay link active hien tai cua user dang dang nhap.
+
+### Success
+- `200 OK` -> `FriendInviteLinkResponse`
+
+### Loi thuong gap
+- `404`: khong co link active
+
+---
+
+## `DELETE /api/v1/friend-invite-links/current`
+
+Revoke link active hien tai.
+
+### Success
+- `204 No Content`
+
+### Loi thuong gap
+- `404`: khong co link active
+
+---
+
+## `POST /api/v1/friend-invite-links/accept`
+
+Chap nhan ket ban bang token trong link moi.
+
+### Request
+
+```json
+{
+  "token": "string"
+}
+```
+
+### Success
+- `200 OK`
+
+```json
+{
+  "friendshipId": "uuid",
+  "status": "ACCEPTED",
+  "friend": {
+    "id": "uuid",
+    "email": "string",
+    "username": "string",
+    "firstName": "string | null",
+    "lastName": "string | null",
+    "displayName": "string",
+    "avatarUrl": "string | null",
+    "isVerified": true,
+    "isGoldMember": false,
+    "profileCompleted": true
+  },
+  "acceptedAt": "2026-03-24T11:30:00"
+}
+```
+
+### Loi thuong gap
+- `400`: token trong request khong hop le/bi rong
+- `400`: tu ket ban voi chinh minh
+- `404`: user khong ton tai
+- `410`: link het han hoac da revoke
+- `409`: link dat max uses
+
+---
+
+## `GET /api/v1/friendships`
+
+Lay danh sach ban be da `ACCEPTED` cua current user.
+
+### Success
+- `200 OK` -> `List<UserResponse>`
+
+### Sample response
+
+```json
+[
+  {
+    "id": "uuid",
+    "email": "friend1@example.com",
+    "username": "friend_1",
+    "firstName": "Friend",
+    "lastName": "One",
+    "displayName": "Friend One",
+    "avatarUrl": null,
+    "isVerified": true,
+    "isGoldMember": false,
+    "profileCompleted": true
+  }
+]
+```
+
+### Loi thuong gap
+- `401`: token khong hop le
+
+---
+
+## 7) Photo module
 
 Tat ca endpoint photo deu la protected endpoint.
 
@@ -280,7 +421,7 @@ multipart/form-data
 ### Rules
 - Neu khong truyen `recipientScope`/`audienceMode` -> mac dinh `ALL_FRIENDS`.
 - Sender luon duoc them vao recipients.
-- `ALL_FRIENDS`: lay toan bo friend ACCEPTED, neu chua co ban thi van gui duoc (`recipientCount = 1`).
+- `ALL_FRIENDS`: realtime theo friendship hien tai khi doc feed (khong fan-out recipients tai thoi diem upload).
 - `SELECTED_FRIENDS`: chi nhan `recipientIds` nam trong danh sach friend ACCEPTED.
 
 ### Success
@@ -297,9 +438,14 @@ multipart/form-data
 ## `GET /api/v1/photos/feed`
 - Tra feed ma current user la recipient.
 - **Pagination type: `Slice`** (da toi uu cho infinite scroll).
+- Ho tro filter theo tung ban: `friendId` (optional UUID).
+- Voi `ALL_FRIENDS`, quyen xem duoc tinh realtime theo friendship `ACCEPTED` hien tai.
 
 ### Success
 - `200 OK` -> `Slice<PhotoResponse>`
+
+### Query params
+- `friendId` (optional): chi lay anh trong feed duoc gui boi user nay.
 
 ### Sample response (rut gon)
 
@@ -368,6 +514,86 @@ multipart/form-data
 
 ### Success
 - `200 OK` -> `PhotoResponse`
+
+---
+
+## `PUT /api/v1/photos/{photoId}/reactions/me`
+
+Them hoac cap nhat reaction cua current user cho photo.
+
+### Request
+
+```json
+{
+  "type": "LIKE"
+}
+```
+
+### Allowed types
+- `LIKE`, `LOVE`, `HAHA`, `WOW`, `SAD`, `ANGRY`
+
+### Success
+- `200 OK`
+
+```json
+{
+  "photoId": "uuid",
+  "userId": "uuid",
+  "type": "LIKE",
+  "createdAt": "2026-03-24T12:00:00"
+}
+```
+
+### Loi thuong gap
+- `400`: reaction type khong hop le
+- `400`: khong duoc reaction anh cua chinh minh
+- `404`: photo khong ton tai hoac ban khong co quyen
+
+---
+
+## `DELETE /api/v1/photos/{photoId}/reactions/me`
+
+Xoa reaction cua current user tren photo.
+
+### Success
+- `204 No Content`
+
+### Loi thuong gap
+- `400`: khong duoc thao tac reaction tren anh cua chinh minh
+- `404`: photo khong ton tai hoac ban khong co quyen
+
+---
+
+## `GET /api/v1/photos/{photoId}/reactions/summary`
+
+Lay tong quan reaction cua photo.
+
+### Success
+- `200 OK`
+
+```json
+{
+  "photoId": "uuid",
+  "totalCount": 3,
+  "myReaction": "LIKE",
+  "countsByType": {
+    "LIKE": 2,
+    "LOVE": 1
+  },
+  "reactors": [
+    {
+      "userId": "uuid",
+      "displayName": "Friend One",
+      "avatarUrl": "https://cdn.example.com/avatar-1.jpg",
+      "type": "LIKE",
+      "reactedAt": "2026-03-24T12:05:00"
+    }
+  ]
+}
+```
+
+### Loi thuong gap
+- `404`: photo khong ton tai hoac ban khong co quyen
 
 ---
 

@@ -12,8 +12,8 @@ class PhotoNotifier extends StateNotifier<PhotoState> {
   late final FetchMyPhotosUseCase _fetchMyPhotosUseCase;
 
   PhotoNotifier({PhotoRepository? repository})
-      : _repository = repository ?? PhotoRepositoryImpl(),
-        super(PhotoState.initial()) {
+    : _repository = repository ?? PhotoRepositoryImpl(),
+      super(PhotoState.initial()) {
     _fetchFeedPhotosUseCase = FetchFeedPhotosUseCase(_repository);
     _fetchMyPhotosUseCase = FetchMyPhotosUseCase(_repository);
   }
@@ -24,43 +24,41 @@ class PhotoNotifier extends StateNotifier<PhotoState> {
     }
 
     if (refresh) {
-      state = state.copyWith(
-        currentPage: 0,
-        hasMore: true,
-        photos: [],
-      );
+      state = state.copyWith(currentPage: 0, hasMore: true, photos: []);
     }
 
     if (!state.hasMore && !refresh) return;
 
-    state = state.copyWith(
-      isLoading: true,
-      errorMessage: null,
-    );
+    state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      if (state.currentFilter == PhotoFilter.all) {
-        final results = await Future.wait([
-          _fetchFeedPhotosUseCase.call(page: state.currentPage),
-          _fetchMyPhotosUseCase.call(page: state.currentPage),
-        ]);
+      if (state.currentFilter == PhotoFilter.all ||
+          state.currentFilter == PhotoFilter.friend) {
+        if (state.currentFilter == PhotoFilter.friend &&
+            (state.selectedFriendId == null ||
+                state.selectedFriendId!.isEmpty)) {
+          state = state.copyWith(
+            photos: const [],
+            hasMore: false,
+            currentPage: 0,
+          );
+          return;
+        }
 
-        final feedSlice = results[0] as SliceResponse<PhotoResponse>;
-        final myPhotosPage = results[1] as PageResponse<PhotoResponse>;
+        final feedSlice = await _fetchFeedPhotosUseCase.call(
+          page: state.currentPage,
+          friendId: state.currentFilter == PhotoFilter.friend
+              ? state.selectedFriendId
+              : null,
+        );
 
-        final fetchedItems = [...feedSlice.content, ...myPhotosPage.content];
-        
+        final fetchedItems = [...feedSlice.content];
+
         List<PhotoResponse> newPhotos;
         if (refresh) {
           newPhotos = fetchedItems;
         } else {
           newPhotos = [...state.photos, ...fetchedItems];
-        }
-
-        bool newHasMore = !feedSlice.last || !myPhotosPage.last;
-        int newPage = state.currentPage;
-        if (newHasMore) {
-          newPage++;
         }
 
         final uniqueMap = <String, PhotoResponse>{};
@@ -71,17 +69,26 @@ class PhotoNotifier extends StateNotifier<PhotoState> {
         newPhotos = uniqueMap.values.toList()
           ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
+        bool newHasMore = !feedSlice.last;
+        int newPage = state.currentPage;
+        if (newHasMore) {
+          newPage++;
+        }
+
         state = state.copyWith(
           photos: newPhotos,
           hasMore: newHasMore,
           currentPage: newPage,
         );
       } else {
-        final pageResponse = await _fetchMyPhotosUseCase.call(page: state.currentPage);
+        final pageResponse = await _fetchMyPhotosUseCase.call(
+          page: state.currentPage,
+        );
 
+        // pageResponse.content may be unmodifiable, so always copy before sorting.
         List<PhotoResponse> newPhotos;
         if (refresh) {
-          newPhotos = pageResponse.content;
+          newPhotos = [...pageResponse.content];
         } else {
           newPhotos = [...state.photos, ...pageResponse.content];
         }
@@ -113,8 +120,22 @@ class PhotoNotifier extends StateNotifier<PhotoState> {
     await fetchPhotos(refresh: false);
   }
 
-  void setFilter(PhotoFilter filter) {
-    state = state.copyWith(currentFilter: filter);
+  void setFilter(PhotoFilter filter, {String? friendId}) {
+    state = state.copyWith(
+      currentFilter: filter,
+      selectedFriendId: filter == PhotoFilter.friend ? friendId : null,
+    );
+  }
+
+  void setAllFilter() {
+    setFilter(PhotoFilter.all);
+  }
+
+  void setMyFilter() {
+    setFilter(PhotoFilter.me);
+  }
+
+  void setFriendFilter(String friendId) {
+    setFilter(PhotoFilter.friend, friendId: friendId);
   }
 }
-

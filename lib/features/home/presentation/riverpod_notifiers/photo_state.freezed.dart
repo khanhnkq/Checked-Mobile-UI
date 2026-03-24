@@ -20,6 +20,7 @@ mixin _$PhotoState {
   List<PhotoResponse> get photos => throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
   PhotoFilter get currentFilter => throw _privateConstructorUsedError;
+  String? get selectedFriendId => throw _privateConstructorUsedError;
   String? get errorMessage => throw _privateConstructorUsedError;
   int get currentPage => throw _privateConstructorUsedError;
   bool get hasMore => throw _privateConstructorUsedError;
@@ -42,6 +43,7 @@ abstract class $PhotoStateCopyWith<$Res> {
     List<PhotoResponse> photos,
     bool isLoading,
     PhotoFilter currentFilter,
+    String? selectedFriendId,
     String? errorMessage,
     int currentPage,
     bool hasMore,
@@ -66,6 +68,7 @@ class _$PhotoStateCopyWithImpl<$Res, $Val extends PhotoState>
     Object? photos = null,
     Object? isLoading = null,
     Object? currentFilter = null,
+    Object? selectedFriendId = freezed,
     Object? errorMessage = freezed,
     Object? currentPage = null,
     Object? hasMore = null,
@@ -84,6 +87,10 @@ class _$PhotoStateCopyWithImpl<$Res, $Val extends PhotoState>
                 ? _value.currentFilter
                 : currentFilter // ignore: cast_nullable_to_non_nullable
                       as PhotoFilter,
+            selectedFriendId: freezed == selectedFriendId
+                ? _value.selectedFriendId
+                : selectedFriendId // ignore: cast_nullable_to_non_nullable
+                      as String?,
             errorMessage: freezed == errorMessage
                 ? _value.errorMessage
                 : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -115,6 +122,7 @@ abstract class _$$PhotoStateImplCopyWith<$Res>
     List<PhotoResponse> photos,
     bool isLoading,
     PhotoFilter currentFilter,
+    String? selectedFriendId,
     String? errorMessage,
     int currentPage,
     bool hasMore,
@@ -138,6 +146,7 @@ class __$$PhotoStateImplCopyWithImpl<$Res>
     Object? photos = null,
     Object? isLoading = null,
     Object? currentFilter = null,
+    Object? selectedFriendId = freezed,
     Object? errorMessage = freezed,
     Object? currentPage = null,
     Object? hasMore = null,
@@ -156,6 +165,10 @@ class __$$PhotoStateImplCopyWithImpl<$Res>
             ? _value.currentFilter
             : currentFilter // ignore: cast_nullable_to_non_nullable
                   as PhotoFilter,
+        selectedFriendId: freezed == selectedFriendId
+            ? _value.selectedFriendId
+            : selectedFriendId // ignore: cast_nullable_to_non_nullable
+                  as String?,
         errorMessage: freezed == errorMessage
             ? _value.errorMessage
             : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -180,6 +193,7 @@ class _$PhotoStateImpl implements _PhotoState {
     final List<PhotoResponse> photos = const [],
     this.isLoading = false,
     this.currentFilter = PhotoFilter.all,
+    this.selectedFriendId,
     this.errorMessage,
     this.currentPage = 0,
     this.hasMore = true,
@@ -201,6 +215,8 @@ class _$PhotoStateImpl implements _PhotoState {
   @JsonKey()
   final PhotoFilter currentFilter;
   @override
+  final String? selectedFriendId;
+  @override
   final String? errorMessage;
   @override
   @JsonKey()
@@ -211,7 +227,7 @@ class _$PhotoStateImpl implements _PhotoState {
 
   @override
   String toString() {
-    return 'PhotoState(photos: $photos, isLoading: $isLoading, currentFilter: $currentFilter, errorMessage: $errorMessage, currentPage: $currentPage, hasMore: $hasMore)';
+    return 'PhotoState(photos: $photos, isLoading: $isLoading, currentFilter: $currentFilter, selectedFriendId: $selectedFriendId, errorMessage: $errorMessage, currentPage: $currentPage, hasMore: $hasMore)';
   }
 
   @override
@@ -224,6 +240,8 @@ class _$PhotoStateImpl implements _PhotoState {
                 other.isLoading == isLoading) &&
             (identical(other.currentFilter, currentFilter) ||
                 other.currentFilter == currentFilter) &&
+            (identical(other.selectedFriendId, selectedFriendId) ||
+                other.selectedFriendId == selectedFriendId) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage) &&
             (identical(other.currentPage, currentPage) ||
@@ -237,6 +255,7 @@ class _$PhotoStateImpl implements _PhotoState {
     const DeepCollectionEquality().hash(_photos),
     isLoading,
     currentFilter,
+    selectedFriendId,
     errorMessage,
     currentPage,
     hasMore,
@@ -256,6 +275,7 @@ abstract class _PhotoState implements PhotoState {
     final List<PhotoResponse> photos,
     final bool isLoading,
     final PhotoFilter currentFilter,
+    final String? selectedFriendId,
     final String? errorMessage,
     final int currentPage,
     final bool hasMore,
@@ -267,6 +287,8 @@ abstract class _PhotoState implements PhotoState {
   bool get isLoading;
   @override
   PhotoFilter get currentFilter;
+  @override
+  String? get selectedFriendId;
   @override
   String? get errorMessage;
   @override

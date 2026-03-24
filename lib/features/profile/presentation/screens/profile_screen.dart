@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import '../../../auth/presentation/riverpod_providers.dart';
 import '../../../expense/presentation/riverpod_providers.dart';
 import '../../../expense/data/models/expense_models.dart';
+import '../../../expense/presentation/widgets/budget_input_bottom_sheet.dart';
+import 'settings_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -27,61 +29,28 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     });
   }
 
-  void _showUpdateBudgetDialog(BuildContext context) {
-    final currentBudget = ref.read(expenseProvider).currentBudget;
-    final controller = TextEditingController(
-      text: currentBudget?.amountLimit?.toInt().toString() ?? ''
+  Future<void> _onEditBudget() async {
+    final currentLimit = ref.read(expenseProvider).currentBudget?.amountLimit;
+    final limit = await BudgetInputBottomSheet.show(
+      context,
+      currentLimit: currentLimit,
     );
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2C2B26),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text('Hạn mức chi tiêu', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Hạn mức cho tháng này', style: TextStyle(color: Colors.grey, fontSize: 13)),
-            const SizedBox(height: 16),
-            TextField(
-              controller: controller,
-              keyboardType: TextInputType.number,
-              autofocus: true,
-              style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
-              decoration: InputDecoration(
-                suffixText: '₫',
-                suffixStyle: const TextStyle(color: Color(0xFFFFD35A)),
-                filled: true,
-                fillColor: Colors.black26,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-              ),
-            ),
-          ],
+    if (limit == null || !mounted) return;
+
+    final success = await ref
+        .read(expenseProvider.notifier)
+        .updateBudget(_monthKey, limit, 80);
+
+    if (!success && mounted) {
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        SnackBar(
+          content: Text(
+            ref.read(expenseProvider).errorMessage ??
+                'Cập nhật hạn mức thất bại',
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => context.pop(),
-            child: const Text('Hủy', style: TextStyle(color: Colors.grey)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final limit = double.tryParse(controller.text);
-              if (limit != null) {
-                ref.read(expenseProvider.notifier).updateBudget(_monthKey, limit, 80);
-                context.pop();
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFD35A),
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-            child: const Text('Lưu lại', style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
+      );
+    }
   }
 
   @override
@@ -105,10 +74,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: const Text('Locket GOLD', style: TextStyle(color: Color(0xFFFFD35A), fontWeight: FontWeight.bold, fontSize: 12)),
         ),
         actions: [
-          IconButton(icon: const Icon(LucideIcons.users, color: Colors.white), onPressed: () {}),
+          IconButton(
+            icon: const Icon(LucideIcons.users, color: Colors.white),
+            onPressed: () => context.push('/friendships'),
+          ),
           IconButton(
             icon: const Icon(LucideIcons.settings, color: Colors.white),
-            onPressed: () => context.push('/settings'),
+            onPressed: () => showSettingsBottomSheet(context),
           ),
           IconButton(icon: const Icon(LucideIcons.chevronRight, color: Colors.white, size: 24), onPressed: () => context.pop()),
           const SizedBox(width: 8),
@@ -186,7 +158,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               IconButton(
                 visualDensity: VisualDensity.compact,
                 icon: const Icon(LucideIcons.edit3, color: Colors.grey, size: 18),
-                onPressed: () => _showUpdateBudgetDialog(context),
+                onPressed: _onEditBudget,
               ),
             ],
           ),

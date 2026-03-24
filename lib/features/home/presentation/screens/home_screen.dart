@@ -9,15 +9,13 @@ import '../widgets/home_bottom_controls.dart';
 import '../widgets/detail_bottom_controls.dart';
 import '../widgets/photo_detail_body.dart';
 import '../riverpod_providers.dart';
+import '../../../friendship/presentation/riverpod_providers.dart';
 import '../../../../shared/widgets/measure_size.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final String? initialPhotoId;
 
-  const HomeScreen({
-    super.key,
-    this.initialPhotoId,
-  });
+  const HomeScreen({super.key, this.initialPhotoId});
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
@@ -26,6 +24,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final PageController _pageController = PageController();
   final ValueNotifier<bool> _isDetailPage = ValueNotifier<bool>(false);
+  final ValueNotifier<int> _currentPageIndex = ValueNotifier<int>(0);
   bool _didApplyInitialPhotoSelection = false;
   double _topOverlayHeight = 0;
   double _bottomOverlayHeight = 0;
@@ -36,15 +35,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _pageController.addListener(_onPageScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(photoProvider.notifier).fetchPhotos();
+      ref.read(friendshipProvider.notifier).fetchFriendships();
     });
   }
 
   void _onPageScroll() {
     if (!_pageController.hasClients) return;
-    
-    final isDetailPage = (_pageController.page?.round() ?? 0) > 0;
+
+    final roundedPage = _pageController.page?.round() ?? 0;
+    final isDetailPage = roundedPage > 0;
     if (isDetailPage != _isDetailPage.value) {
       _isDetailPage.value = isDetailPage;
+    }
+    if (_currentPageIndex.value != roundedPage) {
+      _currentPageIndex.value = roundedPage;
     }
 
     // Trigger load more when near the end of the list
@@ -90,6 +94,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void dispose() {
     _pageController.dispose();
     _isDetailPage.dispose();
+    _currentPageIndex.dispose();
     super.dispose();
   }
 
@@ -107,6 +112,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final photos = ref.watch(photosProvider);
     _tryOpenInitialPhoto(photos);
+    final hasPhotos = photos.isNotEmpty;
+    final detailPageCount = hasPhotos ? photos.length : 1;
 
     return Scaffold(
       backgroundColor: const Color(0xFF12110B),
@@ -117,10 +124,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: PageView.builder(
               controller: _pageController,
               scrollDirection: Axis.vertical,
-              itemCount: 1 + photos.length,
+              itemCount: 1 + detailPageCount,
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return _buildCameraContent(
+                    topInset: _topOverlayHeight,
+                    bottomInset: _bottomOverlayHeight,
+                  );
+                }
+
+                if (!hasPhotos) {
+                  return _buildEmptyDetailContent(
                     topInset: _topOverlayHeight,
                     bottomInset: _bottomOverlayHeight,
                   );
@@ -163,10 +177,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       return const HomeBottomControls();
                     }
 
-                    return DetailBottomControls(
-                      onOpenGrid: _openHistoryGrid,
-                      onPrimaryAction: () {
-                        _pageController.jumpToPage(0);
+                    return ValueListenableBuilder<int>(
+                      valueListenable: _currentPageIndex,
+                      builder: (context, currentPage, _) {
+                        return DetailBottomControls(
+                          onOpenGrid: _openHistoryGrid,
+                          onPrimaryAction: () {
+                            _pageController.jumpToPage(0);
+                          },
+                        );
                       },
                     );
                   },
@@ -196,6 +215,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         const Spacer(),
         SizedBox(height: bottomInset),
       ],
+    );
+  }
+
+  Widget _buildEmptyDetailContent({
+    required double topInset,
+    required double bottomInset,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(top: topInset, bottom: bottomInset),
+      child: const Center(
+        child: Text(
+          'Không có ảnh cho bộ lọc này',
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
     );
   }
 }

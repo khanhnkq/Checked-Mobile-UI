@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:locket/features/expense/data/models/expense_models.dart';
 import 'package:locket/features/expense/presentation/riverpod_providers.dart';
+import 'package:locket/features/expense/presentation/widgets/budget_input_bottom_sheet.dart';
 
 class ExpenseScreen extends ConsumerStatefulWidget {
   const ExpenseScreen({super.key});
@@ -92,7 +93,7 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
               IconButton(
                 visualDensity: VisualDensity.compact,
                 icon: const Icon(LucideIcons.settings2, color: Colors.grey, size: 18),
-                onPressed: () => _showUpdateBudgetDialog(context),
+                onPressed: () => _onEditBudget(),
               ),
             ],
           ),
@@ -168,43 +169,15 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
     );
   }
 
-  void _showUpdateBudgetDialog(BuildContext context) {
-    final currentBudget = ref.read(expenseCurrentBudgetProvider);
-    final controller = TextEditingController(
-      text: currentBudget?.amountLimit?.toInt().toString() ?? '',
+  Future<void> _onEditBudget() async {
+    final currentLimit = ref.read(expenseCurrentBudgetProvider)?.amountLimit;
+    final limit = await BudgetInputBottomSheet.show(
+      context,
+      currentLimit: currentLimit,
     );
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2C2B26),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text('Hạn mức chi tiêu', style: TextStyle(color: Colors.white)),
-        content: TextField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          autofocus: true,
-          style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(suffixText: '₫', suffixStyle: TextStyle(color: Color(0xFFFFD35A))),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Hủy', style: TextStyle(color: Colors.grey))),
-          TextButton(
-            onPressed: () {
-              final limit = double.tryParse(controller.text);
-              if (limit != null) {
-                ref.read(expenseProvider.notifier).updateBudget(
-                      _currentMonthKey,
-                      limit,
-                      80,
-                    );
-                Navigator.pop(context);
-              }
-            },
-            child: const Text('Lưu', style: TextStyle(color: Color(0xFFFFD35A))),
-          ),
-        ],
-      ),
-    );
+    if (limit == null || !mounted) return;
+
+    ref.read(expenseProvider.notifier).updateBudget(_currentMonthKey, limit, 80);
   }
 }
 

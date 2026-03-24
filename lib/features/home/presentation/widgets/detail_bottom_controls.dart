@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+
 import '../../../../shared/widgets/capture_button.dart';
 
 class DetailBottomControls extends StatelessWidget {
@@ -27,18 +28,21 @@ class DetailBottomControls extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
-              icon: const Icon(LucideIcons.layoutGrid, color: Colors.white, size: 32),
+              icon: const Icon(
+                LucideIcons.layoutGrid,
+                color: Colors.white,
+                size: 32,
+              ),
               onPressed: onOpenGrid,
             ),
-            CaptureButton(
-              onTap: onPrimaryAction,
-              size: 80,
-            ),
+            CaptureButton(onTap: onPrimaryAction, size: 80),
             IconButton(
-              icon: const Icon(LucideIcons.pieChart, color: Colors.white, size: 32),
-              onPressed: () {
-                context.push('/expense');
-              },
+              icon: const Icon(
+                LucideIcons.share2,
+                color: Colors.white,
+                size: 32,
+              ),
+              onPressed: onShare ?? () => context.push('/expense'),
             ),
           ],
         ),

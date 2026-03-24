@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../features/auth/presentation/riverpod_providers.dart';
@@ -24,10 +23,6 @@ class AuthGate extends ConsumerWidget {
       );
     }
 
-    // Remove splash screen after initialization
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      FlutterNativeSplash.remove();
-    });
 
     if (authState.status == AuthStatus.authenticated) {
       return authState.isProfileIncomplete

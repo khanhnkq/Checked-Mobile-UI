@@ -7,6 +7,12 @@ import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/expense/data/repositories/expense_repository_impl.dart';
 import '../../features/expense/data/services/expense_service.dart';
 import '../../features/expense/domain/repositories/expense_repository.dart';
+import '../../features/friend_invite/data/repositories/friend_invite_repository_impl.dart';
+import '../../features/friend_invite/data/services/friend_invite_service.dart';
+import '../../features/friend_invite/domain/repositories/friend_invite_repository.dart';
+import '../../features/friendship/data/repositories/friendship_repository_impl.dart';
+import '../../features/friendship/data/services/friendship_service.dart';
+import '../../features/friendship/domain/repositories/friendship_repository.dart';
 import '../../features/home/data/repositories/camera_repository_impl.dart';
 import '../../features/home/data/repositories/photo_repository_impl.dart';
 import '../../features/home/data/services/device_camera_service.dart';
@@ -53,6 +59,14 @@ final expenseServiceProvider = Provider<ExpenseService>((ref) {
   return ExpenseService(dio: ref.watch(dioProvider));
 });
 
+final friendInviteServiceProvider = Provider<FriendInviteService>((ref) {
+  return FriendInviteService(dio: ref.watch(dioProvider));
+});
+
+final friendshipServiceProvider = Provider<FriendshipService>((ref) {
+  return FriendshipService(dio: ref.watch(dioProvider));
+});
+
 final deviceCameraServiceProvider = Provider<DeviceCameraService>((ref) {
   return DeviceCameraService();
 });
@@ -73,13 +87,23 @@ final cameraRepositoryProvider = Provider<CameraRepository>((ref) {
 });
 
 final photoRepositoryProvider = Provider<PhotoRepository>((ref) {
-  return PhotoRepositoryImpl(
-    photoService: ref.watch(photoServiceProvider),
-  );
+  return PhotoRepositoryImpl(photoService: ref.watch(photoServiceProvider));
 });
 
 final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
   return ExpenseRepositoryImpl(
     expenseService: ref.watch(expenseServiceProvider),
+  );
+});
+
+final friendInviteRepositoryProvider = Provider<FriendInviteRepository>((ref) {
+  return FriendInviteRepositoryImpl(
+    service: ref.watch(friendInviteServiceProvider),
+  );
+});
+
+final friendshipRepositoryProvider = Provider<FriendshipRepository>((ref) {
+  return FriendshipRepositoryImpl(
+    service: ref.watch(friendshipServiceProvider),
   );
 });

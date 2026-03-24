@@ -56,11 +56,12 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
     }
   }
 
-  Future<void> updateBudget(
+  Future<bool> updateBudget(
     String monthKey,
     double limit,
     int threshold,
   ) async {
+    state = state.copyWith(errorMessage: null);
     try {
       final updatedBudget = await _updateExpenseBudgetUseCase.call(
         monthKey,
@@ -68,8 +69,10 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
         threshold,
       );
       state = state.copyWith(currentBudget: updatedBudget);
+      return true;
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());
+      return false;
     }
   }
 

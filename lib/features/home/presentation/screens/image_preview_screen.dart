@@ -7,6 +7,7 @@ import '../widgets/image_preview_view.dart';
 import '../widgets/image_preview_bottom_actions.dart';
 import '../widgets/image_preview_user_selection.dart';
 import '../riverpod_providers.dart';
+import '../../../friendship/presentation/riverpod_providers.dart';
 import '../../../../shared/widgets/measure_size.dart';
 
 class ImagePreviewScreen extends ConsumerStatefulWidget {
@@ -21,8 +22,18 @@ class ImagePreviewScreen extends ConsumerStatefulWidget {
 class _ImagePreviewScreenState extends ConsumerState<ImagePreviewScreen> {
   final TextEditingController _amountController = TextEditingController();
   ExpenseCategory? _selectedCategory;
+  bool _useAllFriends = true;
+  final Set<String> _selectedFriendIds = <String>{};
   double _topOverlayHeight = 0;
   double _bottomOverlayHeight = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(friendshipProvider.notifier).fetchFriendships();
+    });
+  }
 
   void _setTopOverlayHeight(double height) {
     if ((_topOverlayHeight - height).abs() < 0.5) return;
@@ -38,17 +49,34 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreviewScreen> {
     final cameraNotifier = ref.read(cameraProvider.notifier);
     try {
       final amount = double.tryParse(_amountController.text);
+      final recipientScope = _useAllFriends
+          ? 'ALL_FRIENDS'
+          : 'SELECTED_FRIENDS';
+      final recipientIds = _useAllFriends
+          ? null
+          : _selectedFriendIds.toList(growable: false);
+
+      if (!_useAllFriends && (recipientIds == null || recipientIds.isEmpty)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Hãy chọn ít nhất 1 người bạn để gửi ảnh'),
+          ),
+        );
+        return;
+      }
+
       final response = await cameraNotifier.sendCapturedPhoto(
         filePath: widget.imagePath,
         amount: amount,
         categoryId: _selectedCategory?.id,
-        recipientScope: 'ALL_FRIENDS',
+        recipientScope: recipientScope,
+        recipientIds: recipientIds,
       );
 
       if (response != null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Gửi ảnh thành công!')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Gửi ảnh thành công!')));
         context.pop(); // Quay lại màn hình camera
       }
     } catch (e) {
@@ -56,7 +84,9 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreviewScreen> {
         final fallback = e.toString().replaceAll('Exception: ', '');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(ref.read(cameraProvider).sendErrorMessage ?? fallback),
+            content: Text(
+              ref.read(cameraProvider).sendErrorMessage ?? fallback,
+            ),
           ),
         );
       }
@@ -129,7 +159,26 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreviewScreen> {
                       },
                     ),
                     const SizedBox(height: 40),
-                    const ImagePreviewUserSelection(),
+                    ImagePreviewUserSelection(
+                      useAllFriends: _useAllFriends,
+                      selectedFriendIds: _selectedFriendIds,
+                      onSelectAll: () {
+                        setState(() {
+                          _useAllFriends = true;
+                          _selectedFriendIds.clear();
+                        });
+                      },
+                      onToggleFriend: (friendId) {
+                        setState(() {
+                          _useAllFriends = false;
+                          if (_selectedFriendIds.contains(friendId)) {
+                            _selectedFriendIds.remove(friendId);
+                          } else {
+                            _selectedFriendIds.add(friendId);
+                          }
+                        });
+                      },
+                    ),
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -143,9 +192,7 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreviewScreen> {
               child: Container(
                 color: Colors.black54,
                 child: const Center(
-                  child: CircularProgressIndicator(
-                    color: Color(0xFFFFD35A),
-                  ),
+                  child: CircularProgressIndicator(color: Color(0xFFFFD35A)),
                 ),
               ),
             ),

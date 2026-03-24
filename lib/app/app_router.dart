@@ -9,6 +9,8 @@ import '../features/profile/presentation/screens/complete_profile_screen.dart';
 import '../features/profile/presentation/screens/settings_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/expense/presentation/screens/expense_screen.dart';
+import '../features/friend_invite/presentation/screens/friend_invite_screen.dart';
+import '../features/friendship/presentation/screens/friendship_screen.dart';
 import '../features/home/presentation/screens/history_grid_screen.dart';
 import '../features/home/presentation/screens/image_preview_screen.dart';
 import 'auth_gate.dart';
@@ -21,11 +23,13 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/login',
-      builder: (BuildContext context, GoRouterState state) => const LoginScreen(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const LoginScreen(),
     ),
     GoRoute(
       path: '/register',
-      builder: (BuildContext context, GoRouterState state) => const RegisterScreen(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const RegisterScreen(),
     ),
     GoRoute(
       path: '/otp',
@@ -41,23 +45,38 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/home',
-      builder: (BuildContext context, GoRouterState state) => const HomeScreen(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const HomeScreen(),
     ),
     GoRoute(
       path: '/profile',
-      builder: (BuildContext context, GoRouterState state) => const ProfileScreen(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const ProfileScreen(),
     ),
     GoRoute(
       path: '/settings',
-      builder: (BuildContext context, GoRouterState state) => const SettingsScreen(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const SettingsScreen(),
     ),
     GoRoute(
       path: '/expense',
-      builder: (BuildContext context, GoRouterState state) => const ExpenseScreen(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const ExpenseScreen(),
+    ),
+    GoRoute(
+      path: '/friend-invite',
+      builder: (BuildContext context, GoRouterState state) =>
+          const FriendInviteScreen(),
+    ),
+    GoRoute(
+      path: '/friendships',
+      builder: (BuildContext context, GoRouterState state) =>
+          const FriendshipScreen(),
     ),
     GoRoute(
       path: '/history',
-      builder: (BuildContext context, GoRouterState state) => const HistoryGridScreen(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const HistoryGridScreen(),
     ),
     GoRoute(
       path: '/image-preview',

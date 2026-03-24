@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../auth/presentation/riverpod_providers.dart';
+import '../../../friendship/presentation/riverpod_providers.dart';
 import '../../../../shared/widgets/circle_icon_button.dart';
 import '../../../../shared/widgets/painters.dart';
 
@@ -21,11 +22,11 @@ class HomeTopBar extends ConsumerWidget {
     this.friendsCount = 1,
     this.padding = const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
     this.backgroundColor = Colors.transparent,
-  })  : leading = null,
-        center = null,
-        trailing = null,
-        useProfileLeading = true,
-        useMessageTrailing = true;
+  }) : leading = null,
+       center = null,
+       trailing = null,
+       useProfileLeading = true,
+       useMessageTrailing = true;
 
   const HomeTopBar.shared({
     super.key,
@@ -42,16 +43,24 @@ class HomeTopBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final avatarUrl = ref.watch(userProfileProvider)?.avatarUrl;
+    final friendshipsCount = ref.watch(friendsCountProvider);
 
     return _HomeTopBarFrame(
       backgroundColor: backgroundColor,
       padding: padding,
-      leading: leading ??
+      leading:
+          leading ??
           (useProfileLeading
               ? _HomeTopBarProfileButton(avatarUrl: avatarUrl)
               : const _HomeTopBarSlot()),
-      center: center ?? _HomeTopBarFriendsPill(friendsCount: friendsCount),
-      trailing: trailing ??
+      center:
+          center ??
+          _HomeTopBarFriendsPill(
+            friendsCount: friendshipsCount,
+            onTap: () => context.push('/friendships'),
+          ),
+      trailing:
+          trailing ??
           (useMessageTrailing
               ? const _HomeTopBarMessageButton()
               : const _HomeTopBarSlot()),
@@ -95,10 +104,7 @@ class _HomeTopBarFrame extends StatelessWidget {
       return topBarContent;
     }
 
-    return ColoredBox(
-      color: backgroundColor,
-      child: topBarContent,
-    );
+    return ColoredBox(color: backgroundColor, child: topBarContent);
   }
 }
 
@@ -126,7 +132,9 @@ class _HomeTopBarProfileButton extends StatelessWidget {
             child: CircleAvatar(
               radius: 18,
               backgroundColor: Colors.transparent,
-              backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
+              backgroundImage: avatarUrl != null
+                  ? NetworkImage(avatarUrl!)
+                  : null,
               child: avatarUrl == null
                   ? const Icon(LucideIcons.user, color: Colors.white, size: 20)
                   : null,
@@ -140,33 +148,37 @@ class _HomeTopBarProfileButton extends StatelessWidget {
 
 class _HomeTopBarFriendsPill extends StatelessWidget {
   final int friendsCount;
+  final VoidCallback? onTap;
 
-  const _HomeTopBarFriendsPill({required this.friendsCount});
+  const _HomeTopBarFriendsPill({required this.friendsCount, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final Color buttonBgColor = Colors.white.withValues(alpha: 0.15);
 
-    return ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: 44),
-      child: CustomPaint(
-        painter: PillBackgroundPainter(color: buttonBgColor),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(LucideIcons.users, color: Colors.white, size: 18),
-              const SizedBox(width: 8),
-              Text(
-                '$friendsCount người bạn',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+    return GestureDetector(
+      onTap: onTap,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 44),
+        child: CustomPaint(
+          painter: PillBackgroundPainter(color: buttonBgColor),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(LucideIcons.users, color: Colors.white, size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  '$friendsCount người bạn',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

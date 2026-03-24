@@ -3,7 +3,7 @@ import '../../data/models/photo_models.dart';
 
 part 'photo_state.freezed.dart';
 
-enum PhotoFilter { all, me }
+enum PhotoFilter { all, me, friend }
 
 @freezed
 class PhotoState with _$PhotoState {
@@ -11,6 +11,7 @@ class PhotoState with _$PhotoState {
     @Default([]) List<PhotoResponse> photos,
     @Default(false) bool isLoading,
     @Default(PhotoFilter.all) PhotoFilter currentFilter,
+    String? selectedFriendId,
     String? errorMessage,
     @Default(0) int currentPage,
     @Default(true) bool hasMore,
@@ -18,4 +19,3 @@ class PhotoState with _$PhotoState {
 
   factory PhotoState.initial() => const PhotoState();
 }
-

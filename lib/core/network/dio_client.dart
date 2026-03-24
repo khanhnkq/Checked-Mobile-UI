@@ -62,9 +62,9 @@ class DioClient {
 
   static String _resolveBaseUrl() {
     try {
-      return dotenv.maybeGet('API_BASE_URL') ?? 'http://192.168.1.209:8080';
+      return dotenv.maybeGet('API_BASE_URL') ?? 'http://192.168.1.143:8080';
     } catch (_) {
-      return 'http://192.168.1.209:8080';
+      return 'http://192.168.1.143:8080';
     }
   }
 }
