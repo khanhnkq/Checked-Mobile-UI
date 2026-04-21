@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../riverpod_providers.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class HomeCameraView extends ConsumerStatefulWidget {
   const HomeCameraView({super.key});
@@ -108,8 +109,8 @@ class _HomeCameraViewState extends ConsumerState<HomeCameraView> {
       ),
       child: Center(
         child: text != null
-            ? Text(text, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold))
-            : Icon(icon, color: Colors.white, size: 20),
+            ? Text(text, style: const TextStyle(color: AppColors.text, fontWeight: FontWeight.bold))
+            : Icon(icon, color: AppColors.text, size: 20),
       ),
     );
   }

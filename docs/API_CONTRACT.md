@@ -417,9 +417,11 @@ multipart/form-data
 - `audienceMode` (optional): alias cua `recipientScope` cho FE cu
 - `recipientIds` (optional list UUID, bat buoc neu `SELECTED_FRIENDS`)
 - `takenAt` (optional, ISO datetime)
+- `transactionType` (optional): `INCOME | EXPENSE`, mac dinh `EXPENSE`
 
 ### Rules
 - Neu khong truyen `recipientScope`/`audienceMode` -> mac dinh `ALL_FRIENDS`.
+- Neu khong truyen `transactionType` -> mac dinh `EXPENSE`.
 - Sender luon duoc them vao recipients.
 - `ALL_FRIENDS`: realtime theo friendship hien tai khi doc feed (khong fan-out recipients tai thoi diem upload).
 - `SELECTED_FRIENDS`: chi nhan `recipientIds` nam trong danh sach friend ACCEPTED.
@@ -568,6 +570,8 @@ Xoa reaction cua current user tren photo.
 
 Lay tong quan reaction cua photo.
 
+- Truong `reactors` chi tra toi da 5 nguoi reaction moi nhat.
+
 ### Success
 - `200 OK`
 
@@ -692,9 +696,10 @@ Base path: `/api/v1/expense`
 
 ---
 
-## `GET /api/v1/expense/entries?monthKey=202603`
-- Tra page danh sach khoan chi trong thang.
+## `GET /api/v1/expense/entries?monthKey=202603&type=EXPENSE|INCOME|ALL`
+- Tra page danh sach khoan chi/thu trong thang.
 - Du lieu nguon tu photo co `amount > 0`.
+- `type` optional, mac dinh `EXPENSE`. Cho phep: `EXPENSE`, `INCOME`, `ALL` (chua ho tro, can GUI tung loai).
 - `200 OK` -> `Page<ExpenseItemResponse>`
 
 ### Expense item sample
@@ -716,7 +721,7 @@ Base path: `/api/v1/expense`
 ---
 
 ## `GET /api/v1/expense/summary?monthKey=202603`
-- Tra tong quan chi tieu theo thang.
+- Tra tong quan chi tieu theo thang (chi tra EXPENSE).
 - `200 OK` -> `ExpenseSummaryResponse`
 
 ### Sample
@@ -730,6 +735,41 @@ Base path: `/api/v1/expense`
   "budgetExceeded": false,
   "percentUsed": 25,
   "byCategory": [
+    {
+      "categoryId": "uuid",
+      "categoryName": "Food",
+      "totalAmount": 650000
+    }
+  ]
+}
+```
+
+---
+
+## `GET /api/v1/expense/cashflow?monthKey=202603`
+- Tra tong quan tien vao + tien ra theo thang (INCOME + EXPENSE + NET).
+- `200 OK` -> `CashflowSummaryResponse`
+
+### Sample
+
+```json
+{
+  "monthKey": "202603",
+  "totalIncome": 2000000,
+  "totalExpense": 1250000,
+  "netCashflow": 750000,
+  "budgetLimit": 5000000,
+  "budgetRemaining": 3750000,
+  "budgetUsedPct": 25,
+  "budgetExceeded": false,
+  "incomeByCategory": [
+    {
+      "categoryId": "uuid",
+      "categoryName": "Salary",
+      "totalAmount": 2000000
+    }
+  ],
+  "expenseByCategory": [
     {
       "categoryId": "uuid",
       "categoryName": "Food",

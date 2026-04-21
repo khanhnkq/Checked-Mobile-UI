@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class SkeletonBox extends StatelessWidget {
   final double? width;
@@ -20,7 +21,7 @@ class SkeletonBox extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: const Color(0xFF2B2A24),
+        color: AppColors.surface,
         borderRadius: borderRadius ?? BorderRadius.circular(12),
       ),
     );
@@ -37,11 +38,7 @@ class SkeletonButton extends StatelessWidget {
   final double height;
   final double borderRadius;
 
-  const SkeletonButton({
-    super.key,
-    this.height = 54,
-    this.borderRadius = 28,
-  });
+  const SkeletonButton({super.key, this.height = 54, this.borderRadius = 28});
 
   @override
   Widget build(BuildContext context) {
@@ -52,4 +49,3 @@ class SkeletonButton extends StatelessWidget {
     );
   }
 }
-

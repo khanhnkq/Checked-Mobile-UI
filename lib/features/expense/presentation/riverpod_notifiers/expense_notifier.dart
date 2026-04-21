@@ -37,16 +37,24 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
     }
   }
 
-  Future<void> fetchMonthlyData(String monthKey) async {
+  Future<void> fetchMonthlyData(
+    String monthKey, {
+    TransactionType? preferredType,
+  }) async {
+    final selectedType = preferredType ?? state.selectedType;
     state = state.copyWith(
       isLoading: true,
       errorMessage: null,
     );
 
     try {
-      final result = await _fetchExpenseMonthlyDataUseCase.call(monthKey);
+      final result = await _fetchExpenseMonthlyDataUseCase.call(
+        monthKey,
+        type: selectedType,
+      );
       final entriesByType = <TransactionType, List<ExpenseEntry>>{
-        TransactionType.expense: result.entries,
+        ...state.entriesByType,
+        selectedType: result.entries,
       };
       state = state.copyWith(
         currentSummary: result.summary,
@@ -54,7 +62,7 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
         currentCashflow: result.cashflow,
         entries: result.entries,
         entriesByType: entriesByType,
-        selectedType: TransactionType.expense,
+        selectedType: selectedType,
       );
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());

@@ -8,16 +8,13 @@ import '../../data/models/reaction_models.dart';
 import '../riverpod_providers.dart';
 import '../../../auth/presentation/riverpod_providers.dart';
 import 'photo_activity_bottom_sheet.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class PhotoDetailBody extends ConsumerWidget {
   final PhotoResponse photo;
   final double? topSpacing;
 
-  const PhotoDetailBody({
-    super.key,
-    required this.photo,
-    this.topSpacing,
-  });
+  const PhotoDetailBody({super.key, required this.photo, this.topSpacing});
 
   String _getTimeAgo(DateTime dateTime) {
     final difference = DateTime.now().difference(dateTime);
@@ -47,14 +44,19 @@ class PhotoDetailBody extends ConsumerWidget {
           SizedBox(height: effectiveTopSpacing),
 
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 32), // Responsive width
+            padding: EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 32,
+            ), // Responsive width
             child: AspectRatio(
               aspectRatio: 1.0,
               child: Stack(
                 alignment: Alignment.bottomCenter,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(50.r), // Responsive radius
+                    borderRadius: BorderRadius.circular(
+                      50.r,
+                    ), // Responsive radius
                     child: Image.network(
                       photo.imageUrl,
                       fit: BoxFit.cover,
@@ -72,9 +74,12 @@ class PhotoDetailBody extends ConsumerWidget {
                         if (photo.amount != null && photo.amount! > 0)
                           Container(
                             margin: EdgeInsets.only(bottom: 8.h),
-                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 6.h,
+                            ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFFFD35A),
+                              color: AppColors.primary,
                               borderRadius: BorderRadius.circular(16.r),
                             ),
                             child: Text(
@@ -88,7 +93,10 @@ class PhotoDetailBody extends ConsumerWidget {
                           ),
                         if (photo.caption != null && photo.caption!.isNotEmpty)
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 8.h,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.black.withValues(alpha: 0.4),
                               borderRadius: BorderRadius.circular(20.r),
@@ -96,7 +104,7 @@ class PhotoDetailBody extends ConsumerWidget {
                             child: Text(
                               photo.caption!,
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors.text,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14.sp,
                               ),
@@ -126,7 +134,7 @@ class PhotoDetailBody extends ConsumerWidget {
               Text(
                 '${isMe ? "Bạn" : photo.senderDisplayName} · ${_getTimeAgo(photo.takenAt)}',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.text,
                   fontWeight: FontWeight.bold,
                   fontSize: 16.sp,
                 ),
@@ -135,9 +143,9 @@ class PhotoDetailBody extends ConsumerWidget {
           ),
           SizedBox(height: 24.h),
           _PhotoEngagementSection(photo: photo, isMe: isMe),
-          
+
           // Khoảng trống linh hoạt ở dưới cùng
-          SizedBox(height: 160.h), 
+          SizedBox(height: 160.h),
         ],
       ),
     );
@@ -201,18 +209,22 @@ class _OwnerActivityPanel extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 24.w),
         padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.14),
+          color: AppColors.text.withValues(alpha: 0.14),
           borderRadius: BorderRadius.circular(22.r),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(LucideIcons.sparkles, color: Colors.white70, size: 16.sp),
+            Icon(
+              LucideIcons.sparkles,
+              color: AppColors.textSecondary,
+              size: 16.sp,
+            ),
             SizedBox(width: 6.w),
             Text(
               'Chưa có hoạt động nào',
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.text,
                 fontSize: 13.sp,
                 fontWeight: FontWeight.w600,
               ),
@@ -225,18 +237,22 @@ class _OwnerActivityPanel extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 24.w),
         padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.14),
+          color: AppColors.text.withValues(alpha: 0.14),
           borderRadius: BorderRadius.circular(22.r),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(LucideIcons.sparkles, color: Colors.white70, size: 16.sp),
+            Icon(
+              LucideIcons.sparkles,
+              color: AppColors.textSecondary,
+              size: 16.sp,
+            ),
             SizedBox(width: 6.w),
             Text(
               'Hoạt động',
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.text,
                 fontWeight: FontWeight.w600,
                 fontSize: 13.sp,
               ),
@@ -245,7 +261,10 @@ class _OwnerActivityPanel extends StatelessWidget {
             if (reactors.isEmpty)
               Text(
                 '${summary?.totalCount ?? 0} người đã reaction',
-                style: TextStyle(color: Colors.white70, fontSize: 12.sp),
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 12.sp,
+                ),
               )
             else
               _InlineReactorAvatars(
@@ -297,14 +316,14 @@ class _InlineReactorAvatars extends StatelessWidget {
                 height: 22.w,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.24),
+                  color: AppColors.text.withValues(alpha: 0.24),
                   shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFF12110B), width: 1),
+                  border: Border.all(color: AppColors.background, width: 1),
                 ),
                 child: Text(
                   '+$extraCount',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.text,
                     fontSize: 9.sp,
                     fontWeight: FontWeight.w700,
                   ),
@@ -329,14 +348,14 @@ class _ReactionAvatar extends StatelessWidget {
       height: 22.w,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: const Color(0xFF12110B), width: 1),
+        border: Border.all(color: AppColors.background, width: 1),
       ),
       child: CircleAvatar(
         radius: 11.r,
-        backgroundColor: const Color(0xFF2A2A2A),
+        backgroundColor: AppColors.surface,
         backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
         child: avatarUrl == null
-            ? Icon(LucideIcons.user, color: Colors.white, size: 11.sp)
+            ? Icon(LucideIcons.user, color: AppColors.text, size: 11.sp)
             : null,
       ),
     );
@@ -359,7 +378,7 @@ class _ReactionComposer extends ConsumerWidget {
       margin: EdgeInsets.symmetric(horizontal: 24.w),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.14),
+        color: AppColors.text.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(30.r),
       ),
       child: Column(
@@ -371,7 +390,7 @@ class _ReactionComposer extends ConsumerWidget {
                 child: Text(
                   'Gửi tin nhắn...',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.text,
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w600,
                   ),
@@ -403,7 +422,7 @@ class _ReactionComposer extends ConsumerWidget {
               SizedBox(width: 8.w),
               Icon(
                 LucideIcons.smilePlus,
-                color: Colors.white.withValues(alpha: 0.9),
+                color: AppColors.text.withValues(alpha: 0.9),
                 size: 28.sp,
               ),
             ],
@@ -441,11 +460,11 @@ class _ReactionChip extends StatelessWidget {
         padding: EdgeInsets.all(6.w),
         decoration: BoxDecoration(
           color: selected
-              ? const Color(0xFFFFD35A).withValues(alpha: 0.22)
+              ? AppColors.primary.withValues(alpha: 0.22)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(16.r),
         ),
-        child: Icon(icon, size: 26.sp, color: Colors.white),
+        child: Icon(icon, size: 26.sp, color: AppColors.text),
       ),
     );
   }

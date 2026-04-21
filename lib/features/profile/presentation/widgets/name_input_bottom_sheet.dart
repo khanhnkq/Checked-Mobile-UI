@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 /// A reusable bottom sheet for updating the user's first and last name.
 ///
@@ -74,7 +75,7 @@ class _NameInputBottomSheetState extends State<NameInputBottomSheet> {
         width: double.infinity,
         padding: const EdgeInsets.fromLTRB(24, 10, 24, 24),
         decoration: const BoxDecoration(
-          color: Color(0xFF2B2B2F),
+          color: AppColors.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
         ),
         child: Column(
@@ -85,7 +86,7 @@ class _NameInputBottomSheetState extends State<NameInputBottomSheet> {
               width: 64,
               height: 6,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.32),
+                color: AppColors.text.withValues(alpha: 0.32),
                 borderRadius: BorderRadius.circular(999),
               ),
             ),
@@ -96,15 +97,15 @@ class _NameInputBottomSheetState extends State<NameInputBottomSheet> {
               controller: _firstNameController,
               textInputAction: TextInputAction.next,
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.text,
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
               ),
               decoration: InputDecoration(
                 hintText: 'Họ',
-                hintStyle: const TextStyle(color: Colors.white70),
+                hintStyle: const TextStyle(color: AppColors.textSecondary),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.10),
+                fillColor: AppColors.text.withValues(alpha: 0.10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(22),
                   borderSide: BorderSide.none,
@@ -119,15 +120,15 @@ class _NameInputBottomSheetState extends State<NameInputBottomSheet> {
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _submit(),
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.text,
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
               ),
               decoration: InputDecoration(
                 hintText: 'Tên',
-                hintStyle: const TextStyle(color: Colors.white70),
+                hintStyle: const TextStyle(color: AppColors.textSecondary),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.10),
+                fillColor: AppColors.text.withValues(alpha: 0.10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(22),
                   borderSide: BorderSide.none,
@@ -143,8 +144,8 @@ class _NameInputBottomSheetState extends State<NameInputBottomSheet> {
               child: ElevatedButton(
                 onPressed: _submit,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFF5CD47),
-                  foregroundColor: const Color(0xFF1A1A1A),
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.surface,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(28),
                   ),
@@ -152,10 +153,7 @@ class _NameInputBottomSheetState extends State<NameInputBottomSheet> {
                 ),
                 child: const Text(
                   'Xác nhận đổi tên',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
                 ),
               ),
             ),

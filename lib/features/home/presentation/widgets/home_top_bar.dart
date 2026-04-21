@@ -6,6 +6,7 @@ import '../../../auth/presentation/riverpod_providers.dart';
 import '../../../friendship/presentation/riverpod_providers.dart';
 import '../../../../shared/widgets/circle_icon_button.dart';
 import '../../../../shared/widgets/painters.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class HomeTopBar extends ConsumerWidget {
   final Widget? leading;
@@ -116,7 +117,7 @@ class _HomeTopBarProfileButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const double buttonSize = 44.0;
-    final Color buttonBgColor = Colors.white.withValues(alpha: 0.15);
+    final Color buttonBgColor = AppColors.text.withValues(alpha: 0.15);
 
     return GestureDetector(
       onTap: () {
@@ -136,7 +137,7 @@ class _HomeTopBarProfileButton extends StatelessWidget {
                   ? NetworkImage(avatarUrl!)
                   : null,
               child: avatarUrl == null
-                  ? const Icon(LucideIcons.user, color: Colors.white, size: 20)
+                  ? const Icon(LucideIcons.user, color: AppColors.text, size: 20)
                   : null,
             ),
           ),
@@ -154,7 +155,7 @@ class _HomeTopBarFriendsPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color buttonBgColor = Colors.white.withValues(alpha: 0.15);
+    final Color buttonBgColor = AppColors.text.withValues(alpha: 0.15);
 
     return GestureDetector(
       onTap: onTap,
@@ -167,12 +168,12 @@ class _HomeTopBarFriendsPill extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(LucideIcons.users, color: Colors.white, size: 18),
+                const Icon(LucideIcons.users, color: AppColors.text, size: 18),
                 const SizedBox(width: 8),
                 Text(
                   '$friendsCount người bạn',
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppColors.text,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
@@ -195,7 +196,7 @@ class _HomeTopBarMessageButton extends StatelessWidget {
       icon: LucideIcons.messageCircle,
       onPressed: () {},
       size: 44,
-      color: Colors.white.withValues(alpha: 0.15),
+      color: AppColors.text.withValues(alpha: 0.15),
     );
   }
 }

@@ -6,12 +6,14 @@ import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/skeleton.dart';
 import '../../../auth/presentation/riverpod_providers.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class CompleteProfileScreen extends ConsumerStatefulWidget {
   const CompleteProfileScreen({super.key});
 
   @override
-  ConsumerState<CompleteProfileScreen> createState() => _CompleteProfileScreenState();
+  ConsumerState<CompleteProfileScreen> createState() =>
+      _CompleteProfileScreenState();
 }
 
 class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
@@ -37,7 +39,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
       lastName: lastName,
       // Username đã được tạo từ bước Register nên không cần gửi lại ở đây nếu Backend không yêu cầu
     );
-    
+
     if (mounted) {
       setState(() => _isLoading = false);
       if (success) {
@@ -45,7 +47,9 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
       } else {
         final authState = ref.read(authProvider);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(authState.errorMessage ?? 'Cập nhật thất bại')),
+          SnackBar(
+            content: Text(authState.errorMessage ?? 'Cập nhật thất bại'),
+          ),
         );
       }
     }
@@ -54,7 +58,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF12110B),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -67,7 +71,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                 const Text(
                   'Hoàn tất hồ sơ',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.text,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -77,7 +81,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                   'Hãy cho chúng tôi biết tên của bạn để bạn bè có thể nhận ra.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: AppColors.text.withValues(alpha: 0.6),
                     fontSize: 14,
                   ),
                 ),
@@ -94,10 +98,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                 const SizedBox(height: 60),
                 _isLoading
                     ? const SkeletonButton()
-                    : PrimaryButton(
-                        text: 'Tiếp tục',
-                        onPressed: _onComplete,
-                      ),
+                    : PrimaryButton(text: 'Tiếp tục', onPressed: _onComplete),
                 const SizedBox(height: 24),
               ],
             ),

@@ -9,6 +9,7 @@ import '../../data/models/friend_invite_models.dart';
 import '../../../friendship/presentation/riverpod_providers.dart';
 import '../riverpod_notifiers/friend_invite_state.dart';
 import '../riverpod_providers.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class FriendInviteScreen extends ConsumerStatefulWidget {
   const FriendInviteScreen({super.key});
@@ -61,17 +62,17 @@ class _FriendInviteScreenState extends ConsumerState<FriendInviteScreen> {
     final isAccepting = state.acceptStatus == FriendInviteAcceptStatus.loading;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF12110B),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.chevronLeft, color: Colors.white),
+          icon: const Icon(LucideIcons.chevronLeft, color: AppColors.text),
           onPressed: () => context.pop(),
         ),
         title: const Text(
           'Mời bạn bè',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: AppColors.text, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -178,7 +179,7 @@ class _InviteLinkCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C1B15),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -190,7 +191,7 @@ class _InviteLinkCard extends StatelessWidget {
                 child: Text(
                   'Link mời hiện tại',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.text,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                   ),
@@ -200,7 +201,7 @@ class _InviteLinkCard extends StatelessWidget {
                 onPressed: onRefresh,
                 icon: const Icon(
                   LucideIcons.refreshCw,
-                  color: Colors.white70,
+                  color: AppColors.textSecondary,
                   size: 18,
                 ),
               ),
@@ -209,13 +210,13 @@ class _InviteLinkCard extends StatelessWidget {
           const SizedBox(height: 8),
           if (state.currentStatus == FriendInviteCurrentStatus.loading)
             const LinearProgressIndicator(
-              color: Color(0xFFFFD35A),
+              color: AppColors.primary,
               minHeight: 3,
             )
           else if (state.currentStatus == FriendInviteCurrentStatus.empty)
             const Text(
               'Bạn chưa có link mời active.',
-              style: TextStyle(color: Colors.white70),
+              style: TextStyle(color: AppColors.textSecondary),
             )
           else if (state.currentStatus == FriendInviteCurrentStatus.error)
             const Text(
@@ -228,24 +229,33 @@ class _InviteLinkCard extends StatelessWidget {
               children: [
                 SelectableText(
                   link.inviteUrl,
-                  style: const TextStyle(color: Colors.white70, fontSize: 13),
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Mã: ${link.tokenPreview} | Dùng ${link.usedCount}/${link.maxUses}',
-                  style: const TextStyle(color: Colors.white60, fontSize: 12),
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 12,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   'Hết hạn: ${link.expiresAt.toLocal()}',
-                  style: const TextStyle(color: Colors.white60, fontSize: 12),
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             )
           else
             const Text(
               'Nhấn tạo để có link mời mới.',
-              style: TextStyle(color: Colors.white70),
+              style: TextStyle(color: AppColors.textSecondary),
             ),
           const SizedBox(height: 16),
           Wrap(
@@ -304,7 +314,7 @@ class _AcceptCodeCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C1B15),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -313,7 +323,7 @@ class _AcceptCodeCard extends StatelessWidget {
           const Text(
             'Tham gia bằng mã mời',
             style: TextStyle(
-              color: Colors.white,
+              color: AppColors.text,
               fontSize: 16,
               fontWeight: FontWeight.w700,
             ),
@@ -321,12 +331,12 @@ class _AcceptCodeCard extends StatelessWidget {
           const SizedBox(height: 10),
           TextField(
             controller: controller,
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(color: AppColors.text),
             decoration: InputDecoration(
               hintText: 'Nhập token mời',
-              hintStyle: const TextStyle(color: Colors.white54),
+              hintStyle: const TextStyle(color: AppColors.textSecondary),
               filled: true,
-              fillColor: Colors.white.withValues(alpha: 0.08),
+              fillColor: AppColors.text.withValues(alpha: 0.08),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -369,7 +379,7 @@ class _AcceptSuccessCard extends StatelessWidget {
       ),
       child: Text(
         'Đã kết bạn với ${result.friend.displayName}',
-        style: const TextStyle(color: Colors.white),
+        style: const TextStyle(color: AppColors.text),
       ),
     );
   }

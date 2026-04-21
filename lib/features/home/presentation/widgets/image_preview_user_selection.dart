@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../friendship/presentation/riverpod_providers.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class ImagePreviewUserSelection extends ConsumerWidget {
   const ImagePreviewUserSelection({
@@ -65,18 +66,18 @@ class ImagePreviewUserSelection extends ConsumerWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: isSelected
-                  ? Border.all(color: const Color(0xFFFFD35A), width: 2)
+                  ? Border.all(color: AppColors.primary, width: 2)
                   : null,
             ),
             child: Padding(
               padding: const EdgeInsets.all(2.0),
               child: CircleAvatar(
-                backgroundColor: Colors.white.withValues(alpha: 0.1),
+                backgroundColor: AppColors.text.withValues(alpha: 0.1),
                 backgroundImage: imageUrl != null
                     ? NetworkImage(imageUrl)
                     : null,
                 child: icon != null
-                    ? Icon(icon, color: Colors.white, size: 24)
+                    ? Icon(icon, color: AppColors.text, size: 24)
                     : null,
               ),
             ),
@@ -90,7 +91,7 @@ class ImagePreviewUserSelection extends ConsumerWidget {
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: isSelected ? const Color(0xFFFFD35A) : Colors.grey,
+                color: isSelected ? AppColors.primary : Colors.grey,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),

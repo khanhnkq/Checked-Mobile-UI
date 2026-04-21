@@ -32,8 +32,15 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   Future<List<ExpenseEntry>> getEntries(
     String monthKey, {
     TransactionType type = TransactionType.expense,
+    int page = 0,
+    int size = 100,
   }) {
-    return _expenseService.getEntries(monthKey, type: type);
+    return _expenseService.getEntries(
+      monthKey,
+      type: type,
+      page: page,
+      size: size,
+    );
   }
 
   @override

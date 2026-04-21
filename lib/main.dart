@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'app/app_router.dart';
+import 'core/theme/app_colors.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,10 +39,26 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           routerConfig: appRouter,
           theme: ThemeData(
-            brightness: Brightness.dark,
+            brightness: Brightness.light,
             useMaterial3: true,
-            scaffoldBackgroundColor: const Color(0xFF12110B),
-            textTheme: GoogleFonts.interTextTheme(),
+            scaffoldBackgroundColor: AppColors.background,
+            primaryColor: AppColors.primary,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: AppColors.primary,
+              brightness: Brightness.light,
+              primary: AppColors.primary,
+              secondary: AppColors.accent,
+              surface: AppColors.surface,
+              background: AppColors.background,
+              onPrimary: AppColors.text,
+              onSecondary: AppColors.text,
+              onSurface: AppColors.text,
+              onBackground: AppColors.text,
+            ),
+            textTheme: GoogleFonts.interTextTheme().apply(
+              bodyColor: AppColors.text,
+              displayColor: AppColors.text,
+            ),
           ),
         );
       },

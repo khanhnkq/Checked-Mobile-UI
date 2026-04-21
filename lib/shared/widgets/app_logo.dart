@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class AppLogo extends StatelessWidget {
   final double size;
   final bool showShadow;
-  
-  const AppLogo({
-    super.key,
-    this.size = 120,
-    this.showShadow = true,
-  });
+
+  const AppLogo({super.key, this.size = 120, this.showShadow = true});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +17,7 @@ class AppLogo extends StatelessWidget {
         boxShadow: showShadow
             ? [
                 BoxShadow(
-                  color: const Color(0xFFFFD35A).withValues(alpha: 0.2),
+                  color: AppColors.primary.withValues(alpha: 0.2),
                   blurRadius: 40,
                   spreadRadius: 12,
                 ),

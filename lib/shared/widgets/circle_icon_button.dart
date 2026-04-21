@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'painters.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class CircleIconButton extends StatelessWidget {
   final IconData icon;
@@ -23,7 +24,7 @@ class CircleIconButton extends StatelessWidget {
       onTap: onPressed,
       child: CustomPaint(
         painter: CircleBackgroundPainter(
-          color: color ?? Colors.white.withValues(alpha: 0.15),
+          color: color ?? AppColors.text.withValues(alpha: 0.15),
         ),
         child: SizedBox(
           width: size,
@@ -31,7 +32,7 @@ class CircleIconButton extends StatelessWidget {
           child: Center(
             child: Icon(
               icon,
-              color: Colors.white,
+              color: AppColors.text,
               size: iconSize,
             ),
           ),

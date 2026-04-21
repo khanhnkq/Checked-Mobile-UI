@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class CaptureButton extends StatelessWidget {
   final VoidCallback onTap;
   final double size;
 
-  const CaptureButton({
-    super.key,
-    required this.onTap,
-    this.size = 84,
-  });
+  const CaptureButton({super.key, required this.onTap, this.size = 84});
 
   @override
   Widget build(BuildContext context) {
@@ -26,20 +23,20 @@ class CaptureButtonPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    
+
     final outerPaint = Paint()
-      ..color = const Color(0xFFFFD35A)
+      ..color = AppColors.primary
       ..style = PaintingStyle.stroke
       ..strokeWidth = 6.0
       ..isAntiAlias = true;
-    
+
     canvas.drawCircle(center, size.width / 2 - 3, outerPaint);
 
     final innerPaint = Paint()
-      ..color = Colors.white
+      ..color = AppColors.text
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
-    
+
     canvas.drawCircle(center, size.width / 2 - 11, innerPaint);
   }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +11,7 @@ import '../widgets/image_preview_user_selection.dart';
 import '../riverpod_providers.dart';
 import '../../../friendship/presentation/riverpod_providers.dart';
 import '../../../../shared/widgets/measure_size.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class ImagePreviewScreen extends ConsumerStatefulWidget {
   final String imagePath;
@@ -50,6 +53,12 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreviewScreen> {
     final cameraNotifier = ref.read(cameraProvider.notifier);
     try {
       final amount = double.tryParse(_amountController.text);
+      if (amount != null && amount < 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Số tiền phải lớn hơn hoặc bằng 0')),
+        );
+        return;
+      }
       final recipientScope = _useAllFriends
           ? 'ALL_FRIENDS'
           : 'SELECTED_FRIENDS';
@@ -76,10 +85,13 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreviewScreen> {
       );
 
       if (response != null && mounted) {
+        final photoNotifier = ref.read(photoProvider.notifier);
+        photoNotifier.addOptimisticPhoto(response);
+        unawaited(photoNotifier.fetchPhotos(refresh: true));
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text('Gửi ảnh thành công!')));
-        context.pop(); // Quay lại màn hình camera
+        context.pop(response.id); // Quay lại và trả về ảnh vừa gửi
       }
     } catch (e) {
       if (mounted) {
@@ -106,7 +118,7 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreviewScreen> {
     final isSending = ref.watch(isSendingProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF12110B),
+      backgroundColor: AppColors.background,
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
@@ -198,7 +210,7 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreviewScreen> {
               child: Container(
                 color: Colors.black54,
                 child: const Center(
-                  child: CircularProgressIndicator(color: Color(0xFFFFD35A)),
+                  child: CircularProgressIndicator(color: AppColors.primary),
                 ),
               ),
             ),

@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:locket/features/expense/data/models/expense_models.dart';
 import 'package:locket/features/expense/presentation/riverpod_providers.dart';
 import 'package:locket/features/expense/presentation/widgets/budget_input_bottom_sheet.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class ExpenseScreen extends ConsumerStatefulWidget {
   const ExpenseScreen({super.key});
@@ -15,7 +16,15 @@ class ExpenseScreen extends ConsumerStatefulWidget {
 
 class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
   late String _currentMonthKey;
-  final _currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫', decimalDigits: 0);
+  final _currencyFormat = NumberFormat.currency(
+    locale: 'vi_VN',
+    symbol: '₫',
+    decimalDigits: 0,
+  );
+  static const _selectableTypes = <TransactionType>[
+    TransactionType.expense,
+    TransactionType.income,
+  ];
 
   @override
   void initState() {
@@ -32,21 +41,28 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
     final selectedType = ref.watch(expenseSelectedTypeProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF12110B),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        title: const Text('Chi tiêu tháng này', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white)),
+        title: const Text(
+          'Chi tiêu tháng này',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: AppColors.text,
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(LucideIcons.chevronLeft, color: Colors.white),
+          icon: const Icon(LucideIcons.chevronLeft, color: AppColors.text),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: () {
         if (expenseState.isLoading && expenseState.currentSummary == null) {
           return const Center(
-            child: CircularProgressIndicator(color: Color(0xFFFFD35A)),
+            child: CircularProgressIndicator(color: AppColors.primary),
           );
         }
 
@@ -54,10 +70,11 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
         if (summary == null) return const SizedBox.shrink();
 
         return RefreshIndicator(
-          onRefresh: () =>
-              ref.read(expenseProvider.notifier).fetchMonthlyData(_currentMonthKey),
-          color: const Color(0xFFFFD35A),
-          backgroundColor: const Color(0xFF2C2B26),
+          onRefresh: () => ref
+              .read(expenseProvider.notifier)
+              .fetchMonthlyData(_currentMonthKey, preferredType: selectedType),
+          color: AppColors.primary,
+          backgroundColor: AppColors.surface,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
@@ -92,41 +109,51 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
-        children: TransactionType.values.map((type) {
-          final isSelected = selectedType == type;
-          final label = type == TransactionType.expense ? 'Chi tiêu' : 'Thu nhập';
-          return Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(
-                right: type == TransactionType.expense ? 8 : 0,
-                left: type == TransactionType.income ? 8 : 0,
-              ),
-              child: GestureDetector(
-                onTap: () {
-                  ref.read(expenseProvider.notifier).selectType(_currentMonthKey, type);
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    color: isSelected ? const Color(0xFFFFD35A) : const Color(0xFF2C2B26),
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(
-                      color: isSelected ? const Color(0xFFFFD35A) : Colors.white10,
-                    ),
+        children: _selectableTypes
+            .map((type) {
+              final isSelected = selectedType == type;
+              final label = type == TransactionType.expense
+                  ? 'Chi tiêu'
+                  : 'Thu nhập';
+              return Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    right: type == TransactionType.expense ? 8 : 0,
+                    left: type == TransactionType.income ? 8 : 0,
                   ),
-                  child: Text(
-                    label,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: isSelected ? Colors.black : Colors.white70,
-                      fontWeight: FontWeight.w700,
+                  child: GestureDetector(
+                    onTap: () {
+                      ref
+                          .read(expenseProvider.notifier)
+                          .selectType(_currentMonthKey, type);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.surface,
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(
+                          color: isSelected
+                              ? AppColors.primary
+                              : AppColors.textSecondary,
+                        ),
+                      ),
+                      child: Text(
+                        label,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: isSelected ? Colors.black : AppColors.textSecondary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          );
-        }).toList(growable: false),
+              );
+            })
+            .toList(growable: false),
       ),
     );
   }
@@ -135,7 +162,10 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(color: const Color(0xFF2C2B26), borderRadius: BorderRadius.circular(24)),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(24),
+      ),
       child: Column(
         children: [
           Row(
@@ -144,20 +174,33 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
               _IconLabel(icon: LucideIcons.wallet, label: 'Tổng đã chi'),
               IconButton(
                 visualDensity: VisualDensity.compact,
-                icon: const Icon(LucideIcons.settings2, color: Colors.grey, size: 18),
+                icon: const Icon(
+                  LucideIcons.settings2,
+                  color: Colors.grey,
+                  size: 18,
+                ),
                 onPressed: () => _onEditBudget(),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          Text(_currencyFormat.format(summary.totalSpent), style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Color(0xFFFFD35A))),
+          Text(
+            _currencyFormat.format(summary.totalSpent),
+            style: const TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+              color: AppColors.primary,
+            ),
+          ),
           const SizedBox(height: 20),
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: LinearProgressIndicator(
               value: (summary.percentUsed / 100).clamp(0.0, 1.0),
-              backgroundColor: Colors.white.withOpacity(0.05),
-              color: summary.budgetExceeded ? Colors.redAccent : const Color(0xFFFFD35A),
+              backgroundColor: AppColors.text.withOpacity(0.05),
+              color: summary.budgetExceeded
+                  ? Colors.redAccent
+                  : AppColors.primary,
               minHeight: 8,
             ),
           ),
@@ -165,11 +208,22 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Tiến độ: ${summary.percentUsed.toStringAsFixed(0)}%', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+              Text(
+                'Tiến độ: ${summary.percentUsed.toStringAsFixed(0)}%',
+                style: const TextStyle(color: Colors.grey, fontSize: 13),
+              ),
               if (summary.remaining != null)
                 Text(
-                  summary.remaining! >= 0 ? 'Còn lại: ${_currencyFormat.format(summary.remaining)}' : 'Vượt: ${_currencyFormat.format(summary.remaining!.abs())}',
-                  style: TextStyle(color: summary.remaining! >= 0 ? Colors.greenAccent : Colors.redAccent, fontSize: 13, fontWeight: FontWeight.bold),
+                  summary.remaining! >= 0
+                      ? 'Còn lại: ${_currencyFormat.format(summary.remaining)}'
+                      : 'Vượt: ${_currencyFormat.format(summary.remaining!.abs())}',
+                  style: TextStyle(
+                    color: summary.remaining! >= 0
+                        ? Colors.greenAccent
+                        : Colors.redAccent,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
             ],
           ),
@@ -189,20 +243,54 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(color: const Color(0xFF2C2B26), borderRadius: BorderRadius.circular(24)),
-      child: categories.isEmpty 
-        ? const Padding(padding: EdgeInsets.all(20), child: Center(child: Text('Chưa có dữ liệu', style: TextStyle(color: Colors.grey))))
-        : Column(
-            children: categories.map((cat) => ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), shape: BoxShape.circle),
-                child: const Icon(LucideIcons.tag, color: Colors.white, size: 16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: categories.isEmpty
+          ? const Padding(
+              padding: EdgeInsets.all(20),
+              child: Center(
+                child: Text(
+                  'Chưa có dữ liệu',
+                  style: TextStyle(color: Colors.grey),
+                ),
               ),
-              title: Text(cat.categoryName, style: const TextStyle(color: Colors.white, fontSize: 14)),
-              trailing: Text(_currencyFormat.format(cat.totalAmount), style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
-            )).toList(),
-          ),
+            )
+          : Column(
+              children: categories
+                  .map(
+                    (cat) => ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.text.withOpacity(0.05),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          LucideIcons.tag,
+                          color: AppColors.text,
+                          size: 16,
+                        ),
+                      ),
+                      title: Text(
+                        cat.categoryName,
+                        style: const TextStyle(
+                          color: AppColors.text,
+                          fontSize: 14,
+                        ),
+                      ),
+                      trailing: Text(
+                        _currencyFormat.format(cat.totalAmount),
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
     );
   }
 
@@ -211,19 +299,29 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
       return const SizedBox.shrink();
     }
 
-    final netColor = cashflow.netCashflow >= 0 ? Colors.greenAccent : Colors.redAccent;
+    final netColor = cashflow.netCashflow >= 0
+        ? Colors.greenAccent
+        : Colors.redAccent;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF2C2B26),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildCashflowItem('Thu nhập', cashflow.totalIncome, Colors.greenAccent),
-          _buildCashflowItem('Chi tiêu', cashflow.totalExpense, const Color(0xFFFFD35A)),
+          _buildCashflowItem(
+            'Thu nhập',
+            cashflow.totalIncome,
+            Colors.greenAccent,
+          ),
+          _buildCashflowItem(
+            'Chi tiêu',
+            cashflow.totalExpense,
+            AppColors.primary,
+          ),
           _buildCashflowItem('Net', cashflow.netCashflow, netColor),
         ],
       ),
@@ -238,7 +336,11 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
         const SizedBox(height: 4),
         Text(
           _currencyFormat.format(amount),
-          style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 14),
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
         ),
       ],
     );
@@ -248,21 +350,65 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(color: const Color(0xFF2C2B26), borderRadius: BorderRadius.circular(24)),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(24),
+      ),
       child: entries.isEmpty
-        ? const Padding(padding: EdgeInsets.all(20), child: Center(child: Text('Chưa có giao dịch', style: TextStyle(color: Colors.grey))))
-        : Column(
-            children: entries.map((entry) => ListTile(
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(entry.thumbnailUrl, width: 44, height: 44, fit: BoxFit.cover, 
-                  errorBuilder: (_, __, ___) => Container(width: 44, height: 44, color: Colors.white10, child: const Icon(LucideIcons.image, size: 20))),
+          ? const Padding(
+              padding: EdgeInsets.all(20),
+              child: Center(
+                child: Text(
+                  'Chưa có giao dịch',
+                  style: TextStyle(color: Colors.grey),
+                ),
               ),
-              title: Text(entry.categoryName ?? 'Khác', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
-              subtitle: Text(DateFormat('dd/MM HH:mm').format(entry.takenAt), style: const TextStyle(color: Colors.grey, fontSize: 11)),
-              trailing: Text(_currencyFormat.format(entry.amount), style: const TextStyle(color: Color(0xFFFFD35A), fontWeight: FontWeight.bold)),
-            )).toList(),
-          ),
+            )
+          : Column(
+              children: entries
+                  .map(
+                    (entry) => ListTile(
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          entry.thumbnailUrl,
+                          width: 44,
+                          height: 44,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            width: 44,
+                            height: 44,
+                            color: AppColors.textSecondary,
+                            child: const Icon(LucideIcons.image, size: 20),
+                          ),
+                        ),
+                      ),
+                      title: Text(
+                        entry.categoryName ?? 'Khác',
+                        style: const TextStyle(
+                          color: AppColors.text,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: Text(
+                        DateFormat('dd/MM HH:mm').format(entry.takenAt),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 11,
+                        ),
+                      ),
+                      trailing: Text(
+                        _currencyFormat.format(entry.amount),
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
     );
   }
 
@@ -274,7 +420,9 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
     );
     if (limit == null || !mounted) return;
 
-    ref.read(expenseProvider.notifier).updateBudget(_currentMonthKey, limit, 80);
+    ref
+        .read(expenseProvider.notifier)
+        .updateBudget(_currentMonthKey, limit, 80);
   }
 }
 
@@ -283,7 +431,17 @@ class _SectionTitle extends StatelessWidget {
   const _SectionTitle({required this.title});
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: const EdgeInsets.only(left: 20, bottom: 12), child: Text(title, style: const TextStyle(color: Colors.grey, fontSize: 14, fontWeight: FontWeight.w500)));
+    return Padding(
+      padding: const EdgeInsets.only(left: 20, bottom: 12),
+      child: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.grey,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
   }
 }
 
@@ -297,11 +455,17 @@ class _IconLabel extends StatelessWidget {
       children: [
         Container(
           padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), shape: BoxShape.circle),
-          child: Icon(icon, color: Colors.white, size: 14),
+          decoration: BoxDecoration(
+            color: AppColors.text.withOpacity(0.05),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: AppColors.text, size: 14),
         ),
         const SizedBox(width: 10),
-        Text(label, style: const TextStyle(color: Colors.white70, fontSize: 14)),
+        Text(
+          label,
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+        ),
       ],
     );
   }

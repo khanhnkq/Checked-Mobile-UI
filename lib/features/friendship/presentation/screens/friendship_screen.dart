@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../riverpod_providers.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class FriendshipScreen extends ConsumerStatefulWidget {
   const FriendshipScreen({super.key});
@@ -27,25 +28,25 @@ class _FriendshipScreenState extends ConsumerState<FriendshipScreen> {
     final friends = friendshipState.friends;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF12110B),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.chevronLeft, color: Colors.white),
+          icon: const Icon(LucideIcons.chevronLeft, color: AppColors.text),
           onPressed: () => context.pop(),
         ),
         title: Text(
           'Bạn bè (${friends.length})',
           style: const TextStyle(
-            color: Colors.white,
+            color: AppColors.text,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(LucideIcons.userPlus, color: Colors.white),
+            icon: const Icon(LucideIcons.userPlus, color: AppColors.text),
             onPressed: () => context.push('/friend-invite'),
           ),
         ],
@@ -55,7 +56,7 @@ class _FriendshipScreenState extends ConsumerState<FriendshipScreen> {
             ref.read(friendshipProvider.notifier).refreshFriendships(),
         child: friendshipState.isLoading && friends.isEmpty
             ? const Center(
-                child: CircularProgressIndicator(color: Color(0xFFFFD35A)),
+                child: CircularProgressIndicator(color: AppColors.primary),
               )
             : friends.isEmpty
             ? ListView(
@@ -65,7 +66,7 @@ class _FriendshipScreenState extends ConsumerState<FriendshipScreen> {
                   Center(
                     child: Text(
                       'Bạn chưa có bạn bè nào.',
-                      style: TextStyle(color: Colors.white70),
+                      style: TextStyle(color: AppColors.textSecondary),
                     ),
                   ),
                 ],
@@ -83,7 +84,7 @@ class _FriendshipScreenState extends ConsumerState<FriendshipScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    tileColor: const Color(0xFF1C1B15),
+                    tileColor: AppColors.surface,
                     leading: CircleAvatar(
                       backgroundImage: friend.avatarUrl != null
                           ? NetworkImage(friend.avatarUrl!)
@@ -95,13 +96,13 @@ class _FriendshipScreenState extends ConsumerState<FriendshipScreen> {
                     title: Text(
                       friend.displayName,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.text,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     subtitle: Text(
                       '@${friend.username}',
-                      style: const TextStyle(color: Colors.white70),
+                      style: const TextStyle(color: AppColors.textSecondary),
                     ),
                   );
                 },
@@ -111,7 +112,7 @@ class _FriendshipScreenState extends ConsumerState<FriendshipScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/friend-invite'),
-        backgroundColor: const Color(0xFFFFD35A),
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.black,
         icon: const Icon(LucideIcons.userPlus2, size: 18),
         label: const Text('Mời bạn'),

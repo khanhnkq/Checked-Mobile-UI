@@ -8,6 +8,8 @@ abstract class ExpenseRepository {
   Future<List<ExpenseEntry>> getEntries(
     String monthKey, {
     TransactionType type = TransactionType.expense,
+    int page = 0,
+    int size = 100,
   });
   Future<MonthlyBudget> updateBudget(
     String monthKey,

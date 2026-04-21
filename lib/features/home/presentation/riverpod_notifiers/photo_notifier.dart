@@ -120,6 +120,24 @@ class PhotoNotifier extends StateNotifier<PhotoState> {
     await fetchPhotos(refresh: false);
   }
 
+  void addOptimisticPhoto(PhotoResponse photo) {
+    // Avoid injecting current-user uploads into a friend-only filtered list.
+    if (state.currentFilter == PhotoFilter.friend) {
+      return;
+    }
+
+    final merged = <PhotoResponse>[photo, ...state.photos];
+    final uniqueMap = <String, PhotoResponse>{};
+    for (final item in merged) {
+      uniqueMap[item.id] = item;
+    }
+
+    final sorted = uniqueMap.values.toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+    state = state.copyWith(photos: sorted);
+  }
+
   void setFilter(PhotoFilter filter, {String? friendId}) {
     state = state.copyWith(
       currentFilter: filter,

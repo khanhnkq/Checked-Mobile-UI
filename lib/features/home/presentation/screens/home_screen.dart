@@ -11,6 +11,7 @@ import '../widgets/photo_detail_body.dart';
 import '../riverpod_providers.dart';
 import '../../../friendship/presentation/riverpod_providers.dart';
 import '../../../../shared/widgets/measure_size.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final String? initialPhotoId;
@@ -90,6 +91,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _pageController.jumpToPage(selectedIndex + 1);
   }
 
+  Future<void> _jumpToPhotoById(String photoId) async {
+    if (!mounted || !_pageController.hasClients) return;
+
+    var photos = ref.read(photosProvider);
+    var selectedIndex = photos.indexWhere((p) => p.id == photoId);
+
+    if (selectedIndex < 0) {
+      await ref.read(photoProvider.notifier).fetchPhotos(refresh: true);
+      if (!mounted || !_pageController.hasClients) return;
+      photos = ref.read(photosProvider);
+      selectedIndex = photos.indexWhere((p) => p.id == photoId);
+    }
+
+    if (selectedIndex < 0) return;
+    _pageController.jumpToPage(selectedIndex + 1);
+  }
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -116,7 +134,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final detailPageCount = hasPhotos ? photos.length : 1;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF12110B),
+      backgroundColor: AppColors.background,
       body: Stack(
         children: [
           // Main content fills the whole screen
@@ -174,7 +192,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   valueListenable: _isDetailPage,
                   builder: (context, isDetailPage, _) {
                     if (!isDetailPage) {
-                      return const HomeBottomControls();
+                      return HomeBottomControls(
+                        onPhotoCreated: _jumpToPhotoById,
+                      );
                     }
 
                     return ValueListenableBuilder<int>(
@@ -228,7 +248,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: Text(
           'Không có ảnh cho bộ lọc này',
           style: TextStyle(
-            color: Colors.white70,
+            color: AppColors.textSecondary,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),

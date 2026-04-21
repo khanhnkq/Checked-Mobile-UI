@@ -25,12 +25,15 @@ class FetchExpenseMonthlyDataUseCase {
 
   final ExpenseRepository _repository;
 
-  Future<ExpenseMonthlyDataResult> call(String monthKey) async {
+  Future<ExpenseMonthlyDataResult> call(
+    String monthKey, {
+    TransactionType type = TransactionType.expense,
+  }) async {
     final results = await Future.wait([
       _repository.getSummary(monthKey),
       _repository.getBudget(monthKey),
       _repository.getCashflow(monthKey),
-      _repository.getEntries(monthKey, type: TransactionType.expense),
+      _repository.getEntries(monthKey, type: type),
     ]);
 
     return ExpenseMonthlyDataResult(

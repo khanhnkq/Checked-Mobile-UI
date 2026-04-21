@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 /// A reusable bottom sheet for entering/updating the monthly budget limit.
 ///
@@ -65,7 +66,7 @@ class _BudgetInputBottomSheetState extends State<BudgetInputBottomSheet> {
         width: double.infinity,
         padding: const EdgeInsets.fromLTRB(24, 10, 24, 24),
         decoration: const BoxDecoration(
-          color: Color(0xFF2B2B2F),
+          color: AppColors.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
         ),
         child: Column(
@@ -76,7 +77,7 @@ class _BudgetInputBottomSheetState extends State<BudgetInputBottomSheet> {
               width: 64,
               height: 6,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.32),
+                color: AppColors.text.withValues(alpha: 0.32),
                 borderRadius: BorderRadius.circular(999),
               ),
             ),
@@ -90,17 +91,17 @@ class _BudgetInputBottomSheetState extends State<BudgetInputBottomSheet> {
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _submit(),
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.text,
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
               ),
               decoration: InputDecoration(
                 hintText: 'Nhập hạn mức',
-                hintStyle: const TextStyle(color: Colors.white70),
+                hintStyle: const TextStyle(color: AppColors.textSecondary),
                 suffixText: '₫',
-                suffixStyle: const TextStyle(color: Color(0xFFF5CD47)),
+                suffixStyle: const TextStyle(color: AppColors.primary),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.10),
+                fillColor: AppColors.text.withValues(alpha: 0.10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(22),
                   borderSide: BorderSide.none,
@@ -116,8 +117,8 @@ class _BudgetInputBottomSheetState extends State<BudgetInputBottomSheet> {
               child: ElevatedButton(
                 onPressed: _submit,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFF5CD47),
-                  foregroundColor: const Color(0xFF1A1A1A),
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.surface,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(28),
                   ),
@@ -125,10 +126,7 @@ class _BudgetInputBottomSheetState extends State<BudgetInputBottomSheet> {
                 ),
                 child: const Text(
                   'Xác nhận hạn mức',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
                 ),
               ),
             ),

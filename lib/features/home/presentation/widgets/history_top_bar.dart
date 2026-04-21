@@ -8,6 +8,7 @@ import '../../../../shared/widgets/painters.dart';
 import 'home_top_bar.dart';
 import '../riverpod_notifiers/photo_state.dart';
 import '../riverpod_providers.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class HistoryTopBar extends ConsumerWidget {
   const HistoryTopBar({super.key});
@@ -86,16 +87,18 @@ class _HistoryFilterPill extends StatelessWidget {
 
   Widget get _selectedLeadingIcon {
     if (currentFilter == PhotoFilter.all) {
-      return const Icon(LucideIcons.users, color: Colors.white, size: 16);
+      return const Icon(LucideIcons.users, color: AppColors.text, size: 16);
     }
 
     if (currentFilter == PhotoFilter.me) {
       return CircleAvatar(
         radius: 9,
-        backgroundImage: userAvatarUrl != null ? NetworkImage(userAvatarUrl!) : null,
+        backgroundImage: userAvatarUrl != null
+            ? NetworkImage(userAvatarUrl!)
+            : null,
         backgroundColor: Colors.grey[800],
         child: userAvatarUrl == null
-            ? const Icon(LucideIcons.user, color: Colors.white, size: 10)
+            ? const Icon(LucideIcons.user, color: AppColors.text, size: 10)
             : null,
       );
     }
@@ -108,7 +111,7 @@ class _HistoryFilterPill extends StatelessWidget {
           : null,
       backgroundColor: Colors.grey[800],
       child: friend?.avatarUrl == null
-          ? const Icon(LucideIcons.user, color: Colors.white, size: 10)
+          ? const Icon(LucideIcons.user, color: AppColors.text, size: 10)
           : null,
     );
   }
@@ -135,7 +138,7 @@ class _HistoryFilterPill extends StatelessWidget {
 
     final selected = await showMenu<_HistoryFilterSelection>(
       context: context,
-      color: const Color(0xFF2C2B26),
+      color: AppColors.surface,
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       constraints: BoxConstraints.tightFor(width: effectiveWidth),
@@ -149,7 +152,7 @@ class _HistoryFilterPill extends StatelessWidget {
         _buildPopupItem(
           value: const _HistoryFilterSelection(filter: PhotoFilter.all),
           title: 'Mọi người',
-          icon: const Icon(LucideIcons.users, color: Colors.white, size: 18),
+          icon: const Icon(LucideIcons.users, color: AppColors.text, size: 18),
           isSelected: currentFilter == PhotoFilter.all,
         ),
         _buildPopupItem(
@@ -162,7 +165,7 @@ class _HistoryFilterPill extends StatelessWidget {
                 : null,
             backgroundColor: Colors.grey[800],
             child: userAvatarUrl == null
-                ? const Icon(LucideIcons.user, color: Colors.white, size: 10)
+                ? const Icon(LucideIcons.user, color: AppColors.text, size: 10)
                 : null,
           ),
           isSelected: currentFilter == PhotoFilter.me,
@@ -181,7 +184,11 @@ class _HistoryFilterPill extends StatelessWidget {
                   : null,
               backgroundColor: Colors.grey[800],
               child: friend.avatarUrl == null
-                  ? const Icon(LucideIcons.user, color: Colors.white, size: 10)
+                  ? const Icon(
+                      LucideIcons.user,
+                      color: AppColors.text,
+                      size: 10,
+                    )
                   : null,
             ),
             isSelected:
@@ -199,7 +206,7 @@ class _HistoryFilterPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buttonBgColor = Colors.white.withValues(alpha: 0.15);
+    final buttonBgColor = AppColors.text.withValues(alpha: 0.15);
 
     return GestureDetector(
       onTap: () => _showCenteredMenu(context),
@@ -221,7 +228,7 @@ class _HistoryFilterPill extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: AppColors.text,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
@@ -230,7 +237,7 @@ class _HistoryFilterPill extends StatelessWidget {
                 const SizedBox(width: 4),
                 const Icon(
                   LucideIcons.chevronDown,
-                  color: Colors.white,
+                  color: AppColors.text,
                   size: 18,
                 ),
               ],
@@ -257,14 +264,14 @@ class _HistoryFilterPill extends StatelessWidget {
             child: Text(
               title,
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.text,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
           if (isSelected)
-            const Icon(LucideIcons.check, color: Color(0xFFFFD35A), size: 16),
+            const Icon(LucideIcons.check, color: AppColors.primary, size: 16),
         ],
       ),
     );

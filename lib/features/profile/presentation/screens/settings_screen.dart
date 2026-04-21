@@ -7,6 +7,7 @@ import '../../../auth/presentation/riverpod_providers.dart';
 import '../providers/app_settings_provider.dart';
 import '../../data/services/profile_service.dart';
 import '../widgets/name_input_bottom_sheet.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 Future<void> showSettingsBottomSheet(BuildContext context) {
   return showModalBottomSheet<void>(
@@ -78,10 +79,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
     if (result == null || !mounted) return;
 
-    final success = await ref.read(authProvider.notifier).completeProfile(
-      firstName: result.firstName,
-      lastName: result.lastName,
-    );
+    final success = await ref
+        .read(authProvider.notifier)
+        .completeProfile(
+          firstName: result.firstName,
+          lastName: result.lastName,
+        );
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -136,7 +139,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ),
                       if (_isUpdatingAvatar)
                         const CircularProgressIndicator(
-                          color: Color(0xFFFFD35A),
+                          color: AppColors.primary,
                           strokeWidth: 2,
                         ),
                     ],
@@ -150,7 +153,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 child: _WidgetCard(
                   icon: const Icon(
                     LucideIcons.plus,
-                    color: Color(0xFFFFD35A),
+                    color: AppColors.primary,
                     size: 32,
                   ),
                   label: 'Tạo',
@@ -177,11 +180,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 trailing: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      LucideIcons.heart,
-                      color: Color(0xFFFFD35A),
-                      size: 18,
-                    ),
+                    Icon(LucideIcons.heart, color: AppColors.primary, size: 18),
                     SizedBox(width: 4),
                     Icon(
                       LucideIcons.chevronRight,
@@ -198,11 +197,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 trailing: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      LucideIcons.heart,
-                      color: Color(0xFFFFD35A),
-                      size: 18,
-                    ),
+                    Icon(LucideIcons.heart, color: AppColors.primary, size: 18),
                     SizedBox(width: 4),
                     Icon(
                       LucideIcons.chevronRight,
@@ -221,7 +216,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   onChanged: (value) => ref
                       .read(appSettingsProvider.notifier)
                       .setStreaksEnabled(value),
-                  activeColor: Colors.white,
+                  activeColor: AppColors.text,
                   activeTrackColor: Colors.green,
                 ),
               ),
@@ -309,7 +304,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final isModal = widget.isModal == true;
     if (isModal) {
       return Material(
-        color: const Color(0xFF12110B),
+        color: AppColors.background,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         clipBehavior: Clip.antiAlias,
         child: SafeArea(
@@ -321,7 +316,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 width: 46,
                 height: 5,
                 decoration: BoxDecoration(
-                  color: Colors.white24,
+                  color: AppColors.textSecondary,
                   borderRadius: BorderRadius.circular(999),
                 ),
               ),
@@ -331,7 +326,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(LucideIcons.chevronDown, color: Colors.white),
+                      icon: const Icon(
+                        LucideIcons.chevronDown,
+                        color: AppColors.text,
+                      ),
                       onPressed: () => context.pop(),
                     ),
                     const Expanded(
@@ -339,7 +337,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         'Cài đặt',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.text,
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),
@@ -358,17 +356,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF12110B),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.chevronLeft, color: Colors.white),
+          icon: const Icon(LucideIcons.chevronLeft, color: AppColors.text),
           onPressed: () => context.pop(),
         ),
         title: const Text(
           'Cài đặt',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: AppColors.text, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -415,9 +413,9 @@ class _WidgetCard extends StatelessWidget {
       child: Container(
         height: 140,
         decoration: BoxDecoration(
-          color: const Color(0xFF2C2B26),
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white.withOpacity(0.05)),
+          border: Border.all(color: AppColors.text.withOpacity(0.05)),
         ),
         child: Column(
           children: [
@@ -426,7 +424,7 @@ class _WidgetCard extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
+                color: AppColors.text.withOpacity(0.05),
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(24),
                   bottomRight: Radius.circular(24),
@@ -436,7 +434,7 @@ class _WidgetCard extends StatelessWidget {
                 label,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  color: Colors.white70,
+                  color: AppColors.textSecondary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -456,7 +454,7 @@ class _SettingsGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF2C2B26),
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(children: children),
@@ -486,14 +484,14 @@ class _SettingsTile extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: AppColors.text.withOpacity(0.05),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: Colors.white, size: 18),
+        child: Icon(icon, color: AppColors.text, size: 18),
       ),
       title: Text(
         title,
-        style: const TextStyle(color: Colors.white, fontSize: 15),
+        style: const TextStyle(color: AppColors.text, fontSize: 15),
       ),
       subtitle: subtitle != null
           ? Text(

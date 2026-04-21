@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../shared/widgets/circle_icon_button.dart';
 import 'home_top_bar.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class ImagePreviewTopBar extends StatelessWidget {
   final VoidCallback onDownload;
@@ -14,7 +15,7 @@ class ImagePreviewTopBar extends StatelessWidget {
       center: const Text(
         'Gửi đến...',
         style: TextStyle(
-          color: Colors.white,
+          color: AppColors.text,
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
@@ -24,7 +25,7 @@ class ImagePreviewTopBar extends StatelessWidget {
         onPressed: onDownload,
         size: 44,
         iconSize: 22,
-        color: Colors.white.withValues(alpha: 0.15),
+        color: AppColors.text.withValues(alpha: 0.15),
       ),
       useProfileLeading: true,
     );

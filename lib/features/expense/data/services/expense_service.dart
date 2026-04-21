@@ -80,6 +80,8 @@ class ExpenseService {
   Future<List<ExpenseEntry>> getEntries(
     String monthKey, {
     TransactionType type = TransactionType.expense,
+    int page = 0,
+    int size = 100,
   }) async {
     try {
       final response = await _dio.get(
@@ -87,6 +89,8 @@ class ExpenseService {
         queryParameters: {
           'monthKey': monthKey,
           'type': type.apiValue,
+          'page': page,
+          'size': size,
         },
       );
       final responseData = response.data;

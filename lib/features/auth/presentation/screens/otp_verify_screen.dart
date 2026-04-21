@@ -6,6 +6,7 @@ import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/skeleton.dart';
 import '../riverpod_providers.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class OtpVerifyScreen extends ConsumerStatefulWidget {
   final String email;
@@ -22,7 +23,7 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
 
   void _verifyOtp() async {
     final authNotifier = ref.read(authProvider.notifier);
-    
+
     if (_otpController.text.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Vui lòng nhập mã OTP 6 số')),
@@ -31,12 +32,12 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
     }
 
     setState(() => _isLoading = true);
-    
+
     await authNotifier.verifyOtp(widget.email, _otpController.text);
 
     if (mounted) {
       setState(() => _isLoading = false);
-      
+
       final authState = ref.read(authProvider);
       if (authState.status == AuthStatus.authenticated) {
         if (authState.isProfileIncomplete) {
@@ -45,9 +46,9 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
           context.go('/home');
         }
       } else if (authState.errorMessage != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(authState.errorMessage!)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(authState.errorMessage!)));
       }
     }
   }
@@ -55,25 +56,24 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF12110B),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            height: MediaQuery.of(context).size.height -
+            height:
+                MediaQuery.of(context).size.height -
                 MediaQuery.of(context).padding.top -
                 MediaQuery.of(context).padding.bottom,
             padding: const EdgeInsets.symmetric(horizontal: 48.0),
             child: Column(
               children: [
                 const Spacer(flex: 3),
-                const Center(
-                  child: AppLogo(),
-                ),
+                const Center(child: AppLogo()),
                 const SizedBox(height: 64),
                 const Text(
                   'Xác thực OTP',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.text,
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
@@ -84,7 +84,7 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
                   'Mã OTP đã được gửi đến\n${widget.email}',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: AppColors.text.withValues(alpha: 0.6),
                     fontSize: 14,
                   ),
                 ),
@@ -96,17 +96,14 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
                 const Spacer(flex: 2),
                 _isLoading
                     ? const SkeletonButton()
-                    : PrimaryButton(
-                        text: 'Xác nhận',
-                        onPressed: _verifyOtp,
-                      ),
+                    : PrimaryButton(text: 'Xác nhận', onPressed: _verifyOtp),
                 const Spacer(flex: 3),
                 TextButton(
                   onPressed: () {},
                   child: const Text(
                     'Gửi lại mã',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.text,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),

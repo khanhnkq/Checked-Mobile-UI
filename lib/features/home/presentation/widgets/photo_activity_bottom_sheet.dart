@@ -3,12 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../data/models/reaction_models.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class PhotoActivityBottomSheet extends StatelessWidget {
-  const PhotoActivityBottomSheet({
-    super.key,
-    required this.reactors,
-  });
+  const PhotoActivityBottomSheet({super.key, required this.reactors});
 
   final List<ReactionActor> reactors;
 
@@ -25,11 +23,7 @@ class PhotoActivityBottomSheet extends StatelessWidget {
     switch (type) {
       case ReactionType.love:
         // Use LucideIcons.heart with red color instead of text emoji if text emoji doesn't render well.
-        return Icon(
-          LucideIcons.heart,
-          color: Colors.redAccent,
-          size: 24.sp,
-        );
+        return Icon(LucideIcons.heart, color: Colors.redAccent, size: 24.sp);
       case ReactionType.haha:
         return Text('😂', style: TextStyle(fontSize: 24.sp));
       case ReactionType.wow:
@@ -41,11 +35,7 @@ class PhotoActivityBottomSheet extends StatelessWidget {
       case ReactionType.like:
       default:
         // Default to a generic like icon if not recognized or null
-        return Icon(
-          LucideIcons.heart,
-          color: Colors.redAccent,
-          size: 24.sp,
-        );
+        return Icon(LucideIcons.heart, color: Colors.redAccent, size: 24.sp);
     }
   }
 
@@ -53,10 +43,8 @@ class PhotoActivityBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1C1C1E),
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(28.r),
-        ),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
       ),
       child: SafeArea(
         child: Column(
@@ -68,7 +56,7 @@ class PhotoActivityBottomSheet extends StatelessWidget {
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: AppColors.text.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
@@ -77,7 +65,7 @@ class PhotoActivityBottomSheet extends StatelessWidget {
             Text(
               'Hoạt động',
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.text,
                 fontSize: 18.sp,
                 fontWeight: FontWeight.w600,
               ),
@@ -89,7 +77,7 @@ class PhotoActivityBottomSheet extends StatelessWidget {
                 child: Text(
                   'Chưa có hoạt động nào',
                   style: TextStyle(
-                    color: Colors.white54,
+                    color: AppColors.textSecondary,
                     fontSize: 14.sp,
                   ),
                 ),
@@ -105,14 +93,14 @@ class PhotoActivityBottomSheet extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 20.r,
-                        backgroundColor: const Color(0xFF2A2A2A),
+                        backgroundColor: AppColors.surface,
                         backgroundImage: actor.avatarUrl != null
                             ? NetworkImage(actor.avatarUrl!)
                             : null,
                         child: actor.avatarUrl == null
                             ? Icon(
                                 LucideIcons.user,
-                                color: Colors.white,
+                                color: AppColors.text,
                                 size: 20.sp,
                               )
                             : null,
@@ -122,7 +110,7 @@ class PhotoActivityBottomSheet extends StatelessWidget {
                         child: Text(
                           actor.displayName,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.text,
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
                           ),

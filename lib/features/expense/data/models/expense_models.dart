@@ -6,16 +6,30 @@ part 'expense_models.freezed.dart';
 part 'expense_models.g.dart';
 
 enum TransactionType {
+  all,
   income,
   expense;
 
-  String get apiValue => this == TransactionType.income ? 'INCOME' : 'EXPENSE';
+  String get apiValue {
+    switch (this) {
+      case TransactionType.all:
+        return 'ALL';
+      case TransactionType.income:
+        return 'INCOME';
+      case TransactionType.expense:
+        return 'EXPENSE';
+    }
+  }
 
   static TransactionType fromApiValue(String? value) {
-    if ((value ?? '').toUpperCase() == 'INCOME') {
-      return TransactionType.income;
+    switch ((value ?? '').toUpperCase()) {
+      case 'ALL':
+        return TransactionType.all;
+      case 'INCOME':
+        return TransactionType.income;
+      default:
+        return TransactionType.expense;
     }
-    return TransactionType.expense;
   }
 }
 

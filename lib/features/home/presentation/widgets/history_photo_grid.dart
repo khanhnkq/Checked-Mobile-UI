@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../data/models/photo_models.dart';
 import '../../../../shared/widgets/skeleton.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class HistoryPhotoGrid extends StatelessWidget {
   final List<PhotoResponse> photos;
@@ -42,7 +43,7 @@ class HistoryPhotoGrid extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Container(
-                      color: Colors.white.withValues(alpha: 0.05),
+                      color: AppColors.text.withValues(alpha: 0.05),
                       child: Image.network(
                         photo.thumbnailUrl,
                         fit: BoxFit.cover,
@@ -54,7 +55,7 @@ class HistoryPhotoGrid extends StatelessWidget {
                         },
                         errorBuilder: (context, error, stackTrace) {
                           return const Center(
-                            child: Icon(LucideIcons.imageOff, color: Colors.white24, size: 24),
+                            child: Icon(LucideIcons.imageOff, color: AppColors.textSecondary, size: 24),
                           );
                         },
                       ),

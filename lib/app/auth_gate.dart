@@ -5,6 +5,7 @@ import '../features/auth/presentation/riverpod_providers.dart';
 import '../features/auth/presentation/screens/login_screen.dart';
 import '../features/home/presentation/screens/home_screen.dart';
 import '../features/profile/presentation/screens/complete_profile_screen.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class AuthGate extends ConsumerWidget {
   const AuthGate({super.key});
@@ -17,7 +18,7 @@ class AuthGate extends ConsumerWidget {
       return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(
-            color: Color(0xFFFFD35A),
+            color: AppColors.primary,
           ),
         ),
       );

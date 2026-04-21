@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:locket/features/expense/data/models/expense_models.dart';
 import 'package:locket/features/expense/presentation/riverpod_providers.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class ImagePreviewView extends ConsumerStatefulWidget {
   final String imagePath;
@@ -30,6 +31,10 @@ class ImagePreviewView extends ConsumerStatefulWidget {
 
 class _ImagePreviewViewState extends ConsumerState<ImagePreviewView> {
   ExpenseCategory? _selectedCategory;
+  static const _selectableTypes = <TransactionType>[
+    TransactionType.expense,
+    TransactionType.income,
+  ];
 
   @override
   void initState() {
@@ -62,7 +67,7 @@ class _ImagePreviewViewState extends ConsumerState<ImagePreviewView> {
                     ),
                   ),
                 ),
-                
+
                 // Overlays
                 Positioned(
                   bottom: 24,
@@ -81,31 +86,44 @@ class _ImagePreviewViewState extends ConsumerState<ImagePreviewView> {
                             shrinkWrap: true,
                             scrollDirection: Axis.horizontal,
                             itemCount: categories.length,
-                            separatorBuilder: (_, index) => const SizedBox(width: 8),
+                            separatorBuilder: (_, index) =>
+                                const SizedBox(width: 8),
                             itemBuilder: (context, index) {
                               final cat = categories[index];
-                              final isSelected = _selectedCategory?.id == cat.id;
+                              final isSelected =
+                                  _selectedCategory?.id == cat.id;
 
                               return GestureDetector(
                                 onTap: () {
-                                  setState(() => _selectedCategory = isSelected ? null : cat);
+                                  setState(
+                                    () => _selectedCategory = isSelected
+                                        ? null
+                                        : cat,
+                                  );
                                   widget.onCategoryChanged(_selectedCategory);
                                 },
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: isSelected
-                                        ? const Color(0xFFFFD35A)
+                                        ? AppColors.primary
                                         : Colors.black.withValues(alpha: 0.4),
                                     borderRadius: BorderRadius.circular(20),
-                                    border:
-                                        isSelected ? null : Border.all(color: Colors.white24),
+                                    border: isSelected
+                                        ? null
+                                        : Border.all(
+                                            color: AppColors.textSecondary,
+                                          ),
                                   ),
                                   child: Center(
                                     child: Text(
                                       cat.name,
                                       style: TextStyle(
-                                        color: isSelected ? Colors.black : Colors.white,
+                                        color: isSelected
+                                            ? Colors.black
+                                            : AppColors.text,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 13,
                                       ),
@@ -128,39 +146,45 @@ class _ImagePreviewViewState extends ConsumerState<ImagePreviewView> {
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: TransactionType.values.map((type) {
-                            final isSelected = widget.transactionType == type;
-                            final label = type == TransactionType.expense
-                                ? 'Chi tiêu'
-                                : 'Thu nhập';
-                            return GestureDetector(
-                              onTap: () => widget.onTransactionTypeChanged(type),
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 150),
-                                margin: const EdgeInsets.symmetric(horizontal: 2),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? const Color(0xFFFFD35A)
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(999),
-                                ),
-                                child: Text(
-                                  label,
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Colors.black
-                                        : Colors.white70,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
+                          children: _selectableTypes
+                              .map((type) {
+                                final isSelected =
+                                    widget.transactionType == type;
+                                final label = type == TransactionType.expense
+                                    ? 'Chi tiêu'
+                                    : 'Thu nhập';
+                                return GestureDetector(
+                                  onTap: () =>
+                                      widget.onTransactionTypeChanged(type),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 150),
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 2,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? AppColors.primary
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(999),
+                                    ),
+                                    child: Text(
+                                      label,
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? Colors.black
+                                            : AppColors.textSecondary,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            );
-                          }).toList(growable: false),
+                                );
+                              })
+                              .toList(growable: false),
                         ),
                       ),
 
@@ -177,13 +201,13 @@ class _ImagePreviewViewState extends ConsumerState<ImagePreviewView> {
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.text,
                             fontWeight: FontWeight.bold,
                           ),
                           decoration: const InputDecoration(
                             hintText: 'Thêm số tiền',
                             hintStyle: TextStyle(
-                              color: Colors.white70,
+                              color: AppColors.textSecondary,
                               fontWeight: FontWeight.w600,
                             ),
                             border: InputBorder.none,

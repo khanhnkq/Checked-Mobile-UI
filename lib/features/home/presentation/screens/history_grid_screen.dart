@@ -7,6 +7,7 @@ import '../widgets/history_top_bar.dart';
 import '../riverpod_providers.dart';
 import '../../../../shared/widgets/skeleton.dart';
 import '../../../../shared/widgets/measure_size.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class HistoryGridScreen extends ConsumerStatefulWidget {
   const HistoryGridScreen({super.key});
@@ -60,7 +61,7 @@ class _HistoryGridScreenState extends ConsumerState<HistoryGridScreen> {
     final error = photoState.errorMessage;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF12110B),
+      backgroundColor: AppColors.background,
       body: Stack(
         children: [
           // 1. Grid content (Main background)
@@ -94,20 +95,25 @@ class _HistoryGridScreenState extends ConsumerState<HistoryGridScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(LucideIcons.alertCircle,
-                            color: Colors.redAccent, size: 48),
+                        const Icon(
+                          LucideIcons.alertCircle,
+                          color: Colors.redAccent,
+                          size: 48,
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           error,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.white70),
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                         TextButton(
                           onPressed: () =>
                               ref.read(photoProvider.notifier).fetchPhotos(),
                           child: const Text(
                             'Thử lại',
-                            style: TextStyle(color: Color(0xFFFFD35A)),
+                            style: TextStyle(color: AppColors.primary),
                           ),
                         ),
                       ],
@@ -129,21 +135,22 @@ class _HistoryGridScreenState extends ConsumerState<HistoryGridScreen> {
                 photos: photos,
                 scrollController: _scrollController,
                 onPhotoTap: (photo) => context.pop(photo.id),
-                padding: const EdgeInsets.only(
-                  top: 0,
-                  bottom: 0,
-                  left: 8,
-                  right: 8,
-                ).copyWith(
-                  top: _topOverlayHeight,
-                  bottom: _bottomOverlayHeight,
-                ),
+                padding:
+                    const EdgeInsets.only(
+                      top: 0,
+                      bottom: 0,
+                      left: 8,
+                      right: 8,
+                    ).copyWith(
+                      top: _topOverlayHeight,
+                      bottom: _bottomOverlayHeight,
+                    ),
                 footer: photoState.hasMore
                     ? const Padding(
                         padding: EdgeInsets.symmetric(vertical: 16),
                         child: Center(
                           child: CircularProgressIndicator(
-                            color: Color(0xFFFFD35A),
+                            color: AppColors.primary,
                           ),
                         ),
                       )
@@ -159,10 +166,7 @@ class _HistoryGridScreenState extends ConsumerState<HistoryGridScreen> {
             right: 0,
             child: MeasureSize(
               onChange: (size) => _setTopOverlayHeight(size.height),
-              child: SafeArea(
-                bottom: false,
-                child: const HistoryTopBar(),
-              ),
+              child: SafeArea(bottom: false, child: const HistoryTopBar()),
             ),
           ),
 
@@ -176,8 +180,11 @@ class _HistoryGridScreenState extends ConsumerState<HistoryGridScreen> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: IconButton(
-                    icon: const Icon(LucideIcons.chevronDown,
-                        color: Colors.white, size: 32),
+                    icon: const Icon(
+                      LucideIcons.chevronDown,
+                      color: AppColors.text,
+                      size: 32,
+                    ),
                     onPressed: () => context.pop(),
                   ),
                 ),

@@ -5,9 +5,12 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../riverpod_providers.dart';
 import '../../../../shared/widgets/circle_icon_button.dart';
 import '../../../../shared/widgets/capture_button.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class HomeBottomControls extends ConsumerWidget {
-  const HomeBottomControls({super.key});
+  final Future<void> Function(String photoId)? onPhotoCreated;
+
+  const HomeBottomControls({super.key, this.onPhotoCreated});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,7 +38,12 @@ class HomeBottomControls extends ConsumerWidget {
                  onTap: () async {
                    final image = await cameraNotifier.takePicture();
                    if (image != null && context.mounted) {
-                     context.push('/image-preview?path=${Uri.encodeComponent(image.path)}');
+                     final createdPhotoId = await context.push<String>(
+                       '/image-preview?path=${Uri.encodeComponent(image.path)}',
+                     );
+                     if (createdPhotoId != null && onPhotoCreated != null) {
+                       await onPhotoCreated!(createdPhotoId);
+                     }
                    }
                  },
                ),
@@ -73,7 +81,7 @@ class HomeBottomControls extends ConsumerWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 color: latestThumbnailUrl == null
-                    ? Colors.white.withValues(alpha: 0.12)
+                    ? AppColors.text.withValues(alpha: 0.12)
                     : null,
                 image: latestThumbnailUrl == null
                     ? null
@@ -83,14 +91,14 @@ class HomeBottomControls extends ConsumerWidget {
                       ),
               ),
               child: latestThumbnailUrl == null
-                  ? const Icon(LucideIcons.image, color: Colors.white70, size: 16)
+                  ? const Icon(LucideIcons.image, color: AppColors.textSecondary, size: 16)
                   : null,
             ),
             const SizedBox(width: 12),
             const Text(
               'Lịch sử',
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.text,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -98,7 +106,7 @@ class HomeBottomControls extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 4),
-        const Icon(LucideIcons.chevronDown, color: Colors.white, size: 24),
+        const Icon(LucideIcons.chevronDown, color: AppColors.text, size: 24),
       ],
     );
   }

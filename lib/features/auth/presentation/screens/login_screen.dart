@@ -6,6 +6,7 @@ import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/skeleton.dart';
 import '../riverpod_providers.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -32,12 +33,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     setState(() => _isLoading = true);
-    
+
     await authNotifier.login(identifier, password);
 
     if (mounted) {
       setState(() => _isLoading = false);
-      
+
       final authState = ref.read(authProvider);
       if (authState.status == AuthStatus.authenticated) {
         if (authState.isProfileIncomplete) {
@@ -49,9 +50,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         final email = Uri.encodeComponent(authState.pendingEmail ?? identifier);
         context.push('/otp?email=$email');
       } else if (authState.errorMessage != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(authState.errorMessage!)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(authState.errorMessage!)));
       }
     }
   }
@@ -59,25 +60,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF12110B),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            height: MediaQuery.of(context).size.height -
+            height:
+                MediaQuery.of(context).size.height -
                 MediaQuery.of(context).padding.top -
                 MediaQuery.of(context).padding.bottom,
             padding: const EdgeInsets.symmetric(horizontal: 48.0),
             child: Column(
               children: [
                 const Spacer(flex: 3),
-                const Center(
-                  child: AppLogo(),
-                ),
+                const Center(child: AppLogo()),
                 const SizedBox(height: 64),
                 const Text(
                   'Đăng nhập',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.text,
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
@@ -97,10 +97,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const Spacer(flex: 2),
                 _isLoading
                     ? const SkeletonButton()
-                    : PrimaryButton(
-                        text: 'Đăng nhập',
-                        onPressed: _login,
-                      ),
+                    : PrimaryButton(text: 'Đăng nhập', onPressed: _login),
                 const Spacer(flex: 3),
                 TextButton(
                   onPressed: () {
@@ -109,7 +106,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: const Text(
                     'Đăng ký',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.text,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),

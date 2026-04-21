@@ -4,6 +4,7 @@ import '../../data/models/photo_models.dart';
 import '../widgets/history_top_bar.dart';
 import '../widgets/detail_bottom_controls.dart';
 import '../widgets/photo_detail_body.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class PhotoDetailScreen extends StatelessWidget {
   final PhotoResponse photo;
@@ -14,13 +15,14 @@ class PhotoDetailScreen extends StatelessWidget {
     super.key,
     required this.photo,
     this.onBackToCamera,
-    this.topSpacing = 200, // Bạn có thể chỉnh mặc định ở đây hoặc truyền vào khi gọi
+    this.topSpacing =
+        200, // Bạn có thể chỉnh mặc định ở đây hoặc truyền vào khi gọi
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF12110B),
+      backgroundColor: AppColors.background,
       body: Stack(
         children: [
           // 1. Content fills the background
@@ -36,25 +38,22 @@ class PhotoDetailScreen extends StatelessWidget {
             top: 0,
             left: 0,
             right: 0,
-            child: SafeArea(
-              bottom: false,
-              child: const HistoryTopBar(),
-            ),
+            child: SafeArea(bottom: false, child: const HistoryTopBar()),
           ),
 
-           // 3. Bottom controls (Overlay)
-           Align(
-             alignment: Alignment.bottomCenter,
-             child: SafeArea(
-               top: false,
-               child: DetailBottomControls(
-                 onOpenGrid: () {
-                   context.push('/history');
-                 },
-                 onPrimaryAction: onBackToCamera ?? () => context.pop(),
-               ),
-             ),
-           ),
+          // 3. Bottom controls (Overlay)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SafeArea(
+              top: false,
+              child: DetailBottomControls(
+                onOpenGrid: () {
+                  context.push('/history');
+                },
+                onPrimaryAction: onBackToCamera ?? () => context.pop(),
+              ),
+            ),
+          ),
         ],
       ),
     );

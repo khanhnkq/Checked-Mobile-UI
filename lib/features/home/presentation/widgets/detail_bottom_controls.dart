@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../shared/widgets/capture_button.dart';
+import 'package:locket/core/theme/app_colors.dart';
 
 class DetailBottomControls extends StatelessWidget {
   final VoidCallback onOpenGrid;
@@ -30,7 +31,7 @@ class DetailBottomControls extends StatelessWidget {
             IconButton(
               icon: const Icon(
                 LucideIcons.layoutGrid,
-                color: Colors.white,
+                color: AppColors.text,
                 size: 32,
               ),
               onPressed: onOpenGrid,
@@ -39,7 +40,7 @@ class DetailBottomControls extends StatelessWidget {
             IconButton(
               icon: const Icon(
                 LucideIcons.share2,
-                color: Colors.white,
+                color: AppColors.text,
                 size: 32,
               ),
               onPressed: onShare ?? () => context.push('/expense'),
