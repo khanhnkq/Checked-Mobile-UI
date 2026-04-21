@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import '../../../expense/data/models/expense_models.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/dio_client.dart';
 import '../models/photo_models.dart';
@@ -16,6 +17,7 @@ class PhotoService {
     String? categoryId,
     String recipientScope = 'ALL_FRIENDS',
     List<String>? recipientIds,
+    TransactionType transactionType = TransactionType.expense,
   }) async {
     try {
       final formData = FormData.fromMap({
@@ -26,6 +28,7 @@ class PhotoService {
         if (caption != null) 'caption': caption,
         if (amount != null) 'amount': amount,
         if (categoryId != null) 'categoryId': categoryId,
+        'transactionType': transactionType.apiValue,
         'recipientScope': recipientScope,
         if (recipientIds != null && recipientIds.isNotEmpty)
           'recipientIds': recipientIds,

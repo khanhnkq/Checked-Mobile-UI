@@ -19,13 +19,21 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   }
 
   @override
+  Future<CashflowSummary> getCashflow(String monthKey) {
+    return _expenseService.getCashflow(monthKey);
+  }
+
+  @override
   Future<MonthlyBudget> getBudget(String monthKey) {
     return _expenseService.getBudget(monthKey);
   }
 
   @override
-  Future<List<ExpenseEntry>> getEntries(String monthKey) {
-    return _expenseService.getEntries(monthKey);
+  Future<List<ExpenseEntry>> getEntries(
+    String monthKey, {
+    TransactionType type = TransactionType.expense,
+  }) {
+    return _expenseService.getEntries(monthKey, type: type);
   }
 
   @override

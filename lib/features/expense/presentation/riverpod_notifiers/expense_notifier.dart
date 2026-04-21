@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/models/expense_models.dart';
 import '../../data/repositories/expense_repository_impl.dart';
 import '../../domain/repositories/expense_repository.dart';
 import '../../domain/usecases/fetch_expense_categories_usecase.dart';
@@ -44,10 +45,51 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
 
     try {
       final result = await _fetchExpenseMonthlyDataUseCase.call(monthKey);
+      final entriesByType = <TransactionType, List<ExpenseEntry>>{
+        TransactionType.expense: result.entries,
+      };
       state = state.copyWith(
         currentSummary: result.summary,
         currentBudget: result.budget,
+        currentCashflow: result.cashflow,
         entries: result.entries,
+        entriesByType: entriesByType,
+        selectedType: TransactionType.expense,
+      );
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
+  }
+
+  Future<void> selectType(
+    String monthKey,
+    TransactionType type,
+  ) async {
+    if (state.selectedType == type) return;
+
+    final cached = state.entriesByType[type];
+    if (cached != null) {
+      state = state.copyWith(selectedType: type, entries: cached);
+      return;
+    }
+
+    state = state.copyWith(
+      isLoading: true,
+      selectedType: type,
+      errorMessage: null,
+    );
+
+    try {
+      final fetchedEntries = await _repository.getEntries(monthKey, type: type);
+      final updatedCache = <TransactionType, List<ExpenseEntry>>{
+        ...state.entriesByType,
+        type: fetchedEntries,
+      };
+      state = state.copyWith(
+        entries: fetchedEntries,
+        entriesByType: updatedCache,
       );
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());

@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 
+import '../../../expense/data/models/expense_models.dart';
 import '../../data/models/photo_models.dart';
 
 abstract class CameraRepository {
@@ -12,6 +13,7 @@ abstract class CameraRepository {
     String? categoryId,
     String recipientScope,
     List<String>? recipientIds,
+    TransactionType transactionType = TransactionType.expense,
   });
 }
 

@@ -29,6 +29,7 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
   @override
   Widget build(BuildContext context) {
     final expenseState = ref.watch(expenseProvider);
+    final selectedType = ref.watch(expenseSelectedTypeProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFF12110B),
@@ -64,11 +65,19 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
               children: [
                 const SizedBox(height: 20),
                 _buildOverviewCard(summary),
+                const SizedBox(height: 16),
+                _buildCashflowCard(expenseState.currentCashflow),
                 const SizedBox(height: 24),
                 const _SectionTitle(title: 'Hạng mục chi tiêu'),
-                _buildCategoryCard(summary),
+                _buildCategoryCard(
+                  summary,
+                  selectedType,
+                  expenseState.currentCashflow,
+                ),
                 const SizedBox(height: 24),
                 const _SectionTitle(title: 'Lịch sử giao dịch'),
+                _buildTypeFilter(selectedType),
+                const SizedBox(height: 12),
                 _buildTransactionList(expenseState.entries),
                 const SizedBox(height: 40),
               ],
@@ -76,6 +85,49 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
           ),
         );
       }(),
+    );
+  }
+
+  Widget _buildTypeFilter(TransactionType selectedType) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: TransactionType.values.map((type) {
+          final isSelected = selectedType == type;
+          final label = type == TransactionType.expense ? 'Chi tiêu' : 'Thu nhập';
+          return Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(
+                right: type == TransactionType.expense ? 8 : 0,
+                left: type == TransactionType.income ? 8 : 0,
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  ref.read(expenseProvider.notifier).selectType(_currentMonthKey, type);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: isSelected ? const Color(0xFFFFD35A) : const Color(0xFF2C2B26),
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(
+                      color: isSelected ? const Color(0xFFFFD35A) : Colors.white10,
+                    ),
+                  ),
+                  child: Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: isSelected ? Colors.black : Colors.white70,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(growable: false),
+      ),
     );
   }
 
@@ -126,15 +178,22 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
     );
   }
 
-  Widget _buildCategoryCard(ExpenseSummary summary) {
+  Widget _buildCategoryCard(
+    ExpenseSummary summary,
+    TransactionType selectedType,
+    CashflowSummary? cashflow,
+  ) {
+    final categories = selectedType == TransactionType.expense
+        ? summary.byCategory
+        : (cashflow?.incomeByCategory ?? const <CategorySummary>[]);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(color: const Color(0xFF2C2B26), borderRadius: BorderRadius.circular(24)),
-      child: summary.byCategory.isEmpty 
+      child: categories.isEmpty 
         ? const Padding(padding: EdgeInsets.all(20), child: Center(child: Text('Chưa có dữ liệu', style: TextStyle(color: Colors.grey))))
         : Column(
-            children: summary.byCategory.map((cat) => ListTile(
+            children: categories.map((cat) => ListTile(
               leading: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), shape: BoxShape.circle),
@@ -144,6 +203,44 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
               trailing: Text(_currencyFormat.format(cat.totalAmount), style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
             )).toList(),
           ),
+    );
+  }
+
+  Widget _buildCashflowCard(CashflowSummary? cashflow) {
+    if (cashflow == null) {
+      return const SizedBox.shrink();
+    }
+
+    final netColor = cashflow.netCashflow >= 0 ? Colors.greenAccent : Colors.redAccent;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2B26),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildCashflowItem('Thu nhập', cashflow.totalIncome, Colors.greenAccent),
+          _buildCashflowItem('Chi tiêu', cashflow.totalExpense, const Color(0xFFFFD35A)),
+          _buildCashflowItem('Net', cashflow.netCashflow, netColor),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCashflowItem(String label, double amount, Color color) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+        const SizedBox(height: 4),
+        Text(
+          _currencyFormat.format(amount),
+          style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+      ],
     );
   }
 

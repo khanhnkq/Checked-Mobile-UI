@@ -22,6 +22,7 @@ class ImagePreviewScreen extends ConsumerStatefulWidget {
 class _ImagePreviewScreenState extends ConsumerState<ImagePreviewScreen> {
   final TextEditingController _amountController = TextEditingController();
   ExpenseCategory? _selectedCategory;
+  TransactionType _selectedTransactionType = TransactionType.expense;
   bool _useAllFriends = true;
   final Set<String> _selectedFriendIds = <String>{};
   double _topOverlayHeight = 0;
@@ -71,6 +72,7 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreviewScreen> {
         categoryId: _selectedCategory?.id,
         recipientScope: recipientScope,
         recipientIds: recipientIds,
+        transactionType: _selectedTransactionType,
       );
 
       if (response != null && mounted) {
@@ -117,6 +119,10 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreviewScreen> {
               bottomOverlayHeight: _bottomOverlayHeight,
               onCategoryChanged: (cat) {
                 setState(() => _selectedCategory = cat);
+              },
+              transactionType: _selectedTransactionType,
+              onTransactionTypeChanged: (type) {
+                setState(() => _selectedTransactionType = type);
               },
             ),
           ),

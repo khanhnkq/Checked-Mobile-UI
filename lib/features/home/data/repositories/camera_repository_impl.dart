@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 
+import '../../../expense/data/models/expense_models.dart';
 import '../../domain/repositories/camera_repository.dart';
 import '../models/photo_models.dart';
 import '../services/device_camera_service.dart';
@@ -40,6 +41,7 @@ class CameraRepositoryImpl implements CameraRepository {
     String? categoryId,
     String recipientScope = 'ALL_FRIENDS',
     List<String>? recipientIds,
+    TransactionType transactionType = TransactionType.expense,
   }) {
     return _photoService.uploadPhoto(
       filePath: filePath,
@@ -47,6 +49,7 @@ class CameraRepositoryImpl implements CameraRepository {
       categoryId: categoryId,
       recipientScope: recipientScope,
       recipientIds: recipientIds,
+      transactionType: transactionType,
     );
   }
 }

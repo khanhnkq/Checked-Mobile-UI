@@ -91,6 +91,44 @@ Map<String, dynamic> _$$CategorySummaryImplToJson(
   'totalAmount': instance.totalAmount,
 };
 
+_$CashflowSummaryImpl _$$CashflowSummaryImplFromJson(
+  Map<String, dynamic> json,
+) => _$CashflowSummaryImpl(
+  monthKey: json['monthKey'] as String? ?? '',
+  totalIncome: _toDoubleOrZero(json['totalIncome']),
+  totalExpense: _toDoubleOrZero(json['totalExpense']),
+  netCashflow: _toDoubleOrZero(json['netCashflow']),
+  budgetLimit: _toNullableDouble(json['budgetLimit']),
+  budgetRemaining: _toNullableDouble(json['budgetRemaining']),
+  budgetUsedPct: (json['budgetUsedPct'] as num?)?.toInt(),
+  budgetExceeded: json['budgetExceeded'] as bool? ?? false,
+  incomeByCategory:
+      (json['incomeByCategory'] as List<dynamic>?)
+          ?.map((e) => CategorySummary.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+  expenseByCategory:
+      (json['expenseByCategory'] as List<dynamic>?)
+          ?.map((e) => CategorySummary.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+);
+
+Map<String, dynamic> _$$CashflowSummaryImplToJson(
+  _$CashflowSummaryImpl instance,
+) => <String, dynamic>{
+  'monthKey': instance.monthKey,
+  'totalIncome': instance.totalIncome,
+  'totalExpense': instance.totalExpense,
+  'netCashflow': instance.netCashflow,
+  'budgetLimit': instance.budgetLimit,
+  'budgetRemaining': instance.budgetRemaining,
+  'budgetUsedPct': instance.budgetUsedPct,
+  'budgetExceeded': instance.budgetExceeded,
+  'incomeByCategory': instance.incomeByCategory,
+  'expenseByCategory': instance.expenseByCategory,
+};
+
 _$ExpenseEntryImpl _$$ExpenseEntryImplFromJson(Map<String, dynamic> json) =>
     _$ExpenseEntryImpl(
       photoId: json['photoId'] as String? ?? '',
@@ -100,6 +138,9 @@ _$ExpenseEntryImpl _$$ExpenseEntryImplFromJson(Map<String, dynamic> json) =>
       note: json['note'] as String?,
       categoryId: json['categoryId'] as String?,
       categoryName: json['categoryName'] as String?,
+      transactionType: json['transactionType'] == null
+          ? TransactionType.expense
+          : TransactionType.fromApiValue(json['transactionType'] as String?),
       takenAt: _dateTimeOrNowFromJson(json['takenAt']),
       createdAt: _dateTimeOrNowFromJson(json['createdAt']),
     );
@@ -113,6 +154,12 @@ Map<String, dynamic> _$$ExpenseEntryImplToJson(_$ExpenseEntryImpl instance) =>
       'note': instance.note,
       'categoryId': instance.categoryId,
       'categoryName': instance.categoryName,
+      'transactionType': _$TransactionTypeEnumMap[instance.transactionType]!,
       'takenAt': instance.takenAt.toIso8601String(),
       'createdAt': instance.createdAt.toIso8601String(),
     };
+
+const _$TransactionTypeEnumMap = {
+  TransactionType.income: 'income',
+  TransactionType.expense: 'expense',
+};

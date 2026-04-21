@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
+import '../../../expense/data/models/expense_models.dart';
 import '../../data/models/photo_models.dart';
 import '../../data/repositories/camera_repository_impl.dart';
 import '../../domain/repositories/camera_repository.dart';
@@ -106,6 +107,7 @@ class CameraNotifier extends StateNotifier<CameraState> {
     String? categoryId,
     String recipientScope = 'ALL_FRIENDS',
     List<String>? recipientIds,
+    TransactionType transactionType = TransactionType.expense,
   }) async {
     state = state.copyWith(
       isSending: true,
@@ -119,6 +121,7 @@ class CameraNotifier extends StateNotifier<CameraState> {
         categoryId: categoryId,
         recipientScope: recipientScope,
         recipientIds: recipientIds,
+        transactionType: transactionType,
       );
     } catch (e) {
       state = state.copyWith(

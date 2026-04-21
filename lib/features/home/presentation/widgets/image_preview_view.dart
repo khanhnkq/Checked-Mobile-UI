@@ -10,6 +10,8 @@ class ImagePreviewView extends ConsumerStatefulWidget {
   final Function(ExpenseCategory?) onCategoryChanged;
   final double topOverlayHeight;
   final double bottomOverlayHeight;
+  final TransactionType transactionType;
+  final ValueChanged<TransactionType> onTransactionTypeChanged;
 
   const ImagePreviewView({
     super.key,
@@ -18,6 +20,8 @@ class ImagePreviewView extends ConsumerStatefulWidget {
     required this.onCategoryChanged,
     required this.topOverlayHeight,
     required this.bottomOverlayHeight,
+    required this.transactionType,
+    required this.onTransactionTypeChanged,
   });
 
   @override
@@ -113,6 +117,52 @@ class _ImagePreviewViewState extends ConsumerState<ImagePreviewView> {
                           ),
                         );
                       }(),
+
+                      Container(
+                        height: 36,
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.4),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: TransactionType.values.map((type) {
+                            final isSelected = widget.transactionType == type;
+                            final label = type == TransactionType.expense
+                                ? 'Chi tiêu'
+                                : 'Thu nhập';
+                            return GestureDetector(
+                              onTap: () => widget.onTransactionTypeChanged(type),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 150),
+                                margin: const EdgeInsets.symmetric(horizontal: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? const Color(0xFFFFD35A)
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(999),
+                                ),
+                                child: Text(
+                                  label,
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Colors.black
+                                        : Colors.white70,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(growable: false),
+                        ),
+                      ),
 
                       // Amount Input
                       Container(

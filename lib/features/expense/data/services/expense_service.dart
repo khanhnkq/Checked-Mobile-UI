@@ -77,14 +77,56 @@ class ExpenseService {
     }
   }
 
-  Future<List<ExpenseEntry>> getEntries(String monthKey) async {
+  Future<List<ExpenseEntry>> getEntries(
+    String monthKey, {
+    TransactionType type = TransactionType.expense,
+  }) async {
     try {
-      final response = await _dio.get('/api/v1/expense/entries', queryParameters: {'monthKey': monthKey});
-      final List<dynamic> data = response.data is List ? response.data : (response.data['content'] ?? []);
+      final response = await _dio.get(
+        '/api/v1/expense/entries',
+        queryParameters: {
+          'monthKey': monthKey,
+          'type': type.apiValue,
+        },
+      );
+      final responseData = response.data;
+      final List<dynamic> data = responseData is List
+          ? responseData
+          : ((responseData as Map<String, dynamic>)['content'] as List<dynamic>? ?? const []);
       return data.map((json) => ExpenseEntry.fromJson(json)).toList();
+    } on DioException catch (e) {
+      appLogger.e('GET ENTRIES ERROR', error: e.response?.data ?? e);
+      throw Exception('Không thể tải lịch sử giao dịch');
     } catch (e) {
-      appLogger.e('GET ENTRIES ERROR', error: e);
-      throw Exception('Không thể tải lịch sử chi tiêu');
+      appLogger.e('GET ENTRIES PARSE ERROR', error: e);
+      throw Exception('Lỗi xử lý dữ liệu lịch sử giao dịch');
+    }
+  }
+
+  Future<CashflowSummary> getCashflow(String monthKey) async {
+    try {
+      final response = await _dio.get(
+        '/api/v1/expense/cashflow',
+        queryParameters: {'monthKey': monthKey},
+      );
+      return CashflowSummary.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      appLogger.e('GET CASHFLOW ERROR', error: e.response?.data ?? e);
+      if (e.response?.statusCode == 404) {
+        return CashflowSummary(
+          monthKey: monthKey,
+          totalIncome: 0,
+          totalExpense: 0,
+          netCashflow: 0,
+          budgetExceeded: false,
+          incomeByCategory: const [],
+          expenseByCategory: const [],
+        );
+      }
+      throw Exception('Không thể tải báo cáo dòng tiền');
+    } catch (e) {
+      appLogger.e('GET CASHFLOW PARSE ERROR', error: e);
+      throw Exception('Lỗi xử lý dữ liệu dòng tiền');
     }
   }
 

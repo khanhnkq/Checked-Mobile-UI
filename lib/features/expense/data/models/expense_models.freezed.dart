@@ -1146,6 +1146,429 @@ abstract class _CategorySummary implements CategorySummary {
       throw _privateConstructorUsedError;
 }
 
+CashflowSummary _$CashflowSummaryFromJson(Map<String, dynamic> json) {
+  return _CashflowSummary.fromJson(json);
+}
+
+/// @nodoc
+mixin _$CashflowSummary {
+  @JsonKey(defaultValue: '')
+  String get monthKey => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _toDoubleOrZero)
+  double get totalIncome => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _toDoubleOrZero)
+  double get totalExpense => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _toDoubleOrZero)
+  double get netCashflow => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _toNullableDouble)
+  double? get budgetLimit => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _toNullableDouble)
+  double? get budgetRemaining => throw _privateConstructorUsedError;
+  int? get budgetUsedPct => throw _privateConstructorUsedError;
+  @JsonKey(defaultValue: false)
+  bool get budgetExceeded => throw _privateConstructorUsedError;
+  @JsonKey(defaultValue: <CategorySummary>[])
+  List<CategorySummary> get incomeByCategory =>
+      throw _privateConstructorUsedError;
+  @JsonKey(defaultValue: <CategorySummary>[])
+  List<CategorySummary> get expenseByCategory =>
+      throw _privateConstructorUsedError;
+
+  /// Serializes this CashflowSummary to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of CashflowSummary
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $CashflowSummaryCopyWith<CashflowSummary> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $CashflowSummaryCopyWith<$Res> {
+  factory $CashflowSummaryCopyWith(
+    CashflowSummary value,
+    $Res Function(CashflowSummary) then,
+  ) = _$CashflowSummaryCopyWithImpl<$Res, CashflowSummary>;
+  @useResult
+  $Res call({
+    @JsonKey(defaultValue: '') String monthKey,
+    @JsonKey(fromJson: _toDoubleOrZero) double totalIncome,
+    @JsonKey(fromJson: _toDoubleOrZero) double totalExpense,
+    @JsonKey(fromJson: _toDoubleOrZero) double netCashflow,
+    @JsonKey(fromJson: _toNullableDouble) double? budgetLimit,
+    @JsonKey(fromJson: _toNullableDouble) double? budgetRemaining,
+    int? budgetUsedPct,
+    @JsonKey(defaultValue: false) bool budgetExceeded,
+    @JsonKey(defaultValue: <CategorySummary>[])
+    List<CategorySummary> incomeByCategory,
+    @JsonKey(defaultValue: <CategorySummary>[])
+    List<CategorySummary> expenseByCategory,
+  });
+}
+
+/// @nodoc
+class _$CashflowSummaryCopyWithImpl<$Res, $Val extends CashflowSummary>
+    implements $CashflowSummaryCopyWith<$Res> {
+  _$CashflowSummaryCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of CashflowSummary
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? monthKey = null,
+    Object? totalIncome = null,
+    Object? totalExpense = null,
+    Object? netCashflow = null,
+    Object? budgetLimit = freezed,
+    Object? budgetRemaining = freezed,
+    Object? budgetUsedPct = freezed,
+    Object? budgetExceeded = null,
+    Object? incomeByCategory = null,
+    Object? expenseByCategory = null,
+  }) {
+    return _then(
+      _value.copyWith(
+            monthKey: null == monthKey
+                ? _value.monthKey
+                : monthKey // ignore: cast_nullable_to_non_nullable
+                      as String,
+            totalIncome: null == totalIncome
+                ? _value.totalIncome
+                : totalIncome // ignore: cast_nullable_to_non_nullable
+                      as double,
+            totalExpense: null == totalExpense
+                ? _value.totalExpense
+                : totalExpense // ignore: cast_nullable_to_non_nullable
+                      as double,
+            netCashflow: null == netCashflow
+                ? _value.netCashflow
+                : netCashflow // ignore: cast_nullable_to_non_nullable
+                      as double,
+            budgetLimit: freezed == budgetLimit
+                ? _value.budgetLimit
+                : budgetLimit // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            budgetRemaining: freezed == budgetRemaining
+                ? _value.budgetRemaining
+                : budgetRemaining // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            budgetUsedPct: freezed == budgetUsedPct
+                ? _value.budgetUsedPct
+                : budgetUsedPct // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            budgetExceeded: null == budgetExceeded
+                ? _value.budgetExceeded
+                : budgetExceeded // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            incomeByCategory: null == incomeByCategory
+                ? _value.incomeByCategory
+                : incomeByCategory // ignore: cast_nullable_to_non_nullable
+                      as List<CategorySummary>,
+            expenseByCategory: null == expenseByCategory
+                ? _value.expenseByCategory
+                : expenseByCategory // ignore: cast_nullable_to_non_nullable
+                      as List<CategorySummary>,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$CashflowSummaryImplCopyWith<$Res>
+    implements $CashflowSummaryCopyWith<$Res> {
+  factory _$$CashflowSummaryImplCopyWith(
+    _$CashflowSummaryImpl value,
+    $Res Function(_$CashflowSummaryImpl) then,
+  ) = __$$CashflowSummaryImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({
+    @JsonKey(defaultValue: '') String monthKey,
+    @JsonKey(fromJson: _toDoubleOrZero) double totalIncome,
+    @JsonKey(fromJson: _toDoubleOrZero) double totalExpense,
+    @JsonKey(fromJson: _toDoubleOrZero) double netCashflow,
+    @JsonKey(fromJson: _toNullableDouble) double? budgetLimit,
+    @JsonKey(fromJson: _toNullableDouble) double? budgetRemaining,
+    int? budgetUsedPct,
+    @JsonKey(defaultValue: false) bool budgetExceeded,
+    @JsonKey(defaultValue: <CategorySummary>[])
+    List<CategorySummary> incomeByCategory,
+    @JsonKey(defaultValue: <CategorySummary>[])
+    List<CategorySummary> expenseByCategory,
+  });
+}
+
+/// @nodoc
+class __$$CashflowSummaryImplCopyWithImpl<$Res>
+    extends _$CashflowSummaryCopyWithImpl<$Res, _$CashflowSummaryImpl>
+    implements _$$CashflowSummaryImplCopyWith<$Res> {
+  __$$CashflowSummaryImplCopyWithImpl(
+    _$CashflowSummaryImpl _value,
+    $Res Function(_$CashflowSummaryImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of CashflowSummary
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? monthKey = null,
+    Object? totalIncome = null,
+    Object? totalExpense = null,
+    Object? netCashflow = null,
+    Object? budgetLimit = freezed,
+    Object? budgetRemaining = freezed,
+    Object? budgetUsedPct = freezed,
+    Object? budgetExceeded = null,
+    Object? incomeByCategory = null,
+    Object? expenseByCategory = null,
+  }) {
+    return _then(
+      _$CashflowSummaryImpl(
+        monthKey: null == monthKey
+            ? _value.monthKey
+            : monthKey // ignore: cast_nullable_to_non_nullable
+                  as String,
+        totalIncome: null == totalIncome
+            ? _value.totalIncome
+            : totalIncome // ignore: cast_nullable_to_non_nullable
+                  as double,
+        totalExpense: null == totalExpense
+            ? _value.totalExpense
+            : totalExpense // ignore: cast_nullable_to_non_nullable
+                  as double,
+        netCashflow: null == netCashflow
+            ? _value.netCashflow
+            : netCashflow // ignore: cast_nullable_to_non_nullable
+                  as double,
+        budgetLimit: freezed == budgetLimit
+            ? _value.budgetLimit
+            : budgetLimit // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        budgetRemaining: freezed == budgetRemaining
+            ? _value.budgetRemaining
+            : budgetRemaining // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        budgetUsedPct: freezed == budgetUsedPct
+            ? _value.budgetUsedPct
+            : budgetUsedPct // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        budgetExceeded: null == budgetExceeded
+            ? _value.budgetExceeded
+            : budgetExceeded // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        incomeByCategory: null == incomeByCategory
+            ? _value._incomeByCategory
+            : incomeByCategory // ignore: cast_nullable_to_non_nullable
+                  as List<CategorySummary>,
+        expenseByCategory: null == expenseByCategory
+            ? _value._expenseByCategory
+            : expenseByCategory // ignore: cast_nullable_to_non_nullable
+                  as List<CategorySummary>,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$CashflowSummaryImpl implements _CashflowSummary {
+  const _$CashflowSummaryImpl({
+    @JsonKey(defaultValue: '') required this.monthKey,
+    @JsonKey(fromJson: _toDoubleOrZero) required this.totalIncome,
+    @JsonKey(fromJson: _toDoubleOrZero) required this.totalExpense,
+    @JsonKey(fromJson: _toDoubleOrZero) required this.netCashflow,
+    @JsonKey(fromJson: _toNullableDouble) this.budgetLimit,
+    @JsonKey(fromJson: _toNullableDouble) this.budgetRemaining,
+    this.budgetUsedPct,
+    @JsonKey(defaultValue: false) required this.budgetExceeded,
+    @JsonKey(defaultValue: <CategorySummary>[])
+    required final List<CategorySummary> incomeByCategory,
+    @JsonKey(defaultValue: <CategorySummary>[])
+    required final List<CategorySummary> expenseByCategory,
+  }) : _incomeByCategory = incomeByCategory,
+       _expenseByCategory = expenseByCategory;
+
+  factory _$CashflowSummaryImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CashflowSummaryImplFromJson(json);
+
+  @override
+  @JsonKey(defaultValue: '')
+  final String monthKey;
+  @override
+  @JsonKey(fromJson: _toDoubleOrZero)
+  final double totalIncome;
+  @override
+  @JsonKey(fromJson: _toDoubleOrZero)
+  final double totalExpense;
+  @override
+  @JsonKey(fromJson: _toDoubleOrZero)
+  final double netCashflow;
+  @override
+  @JsonKey(fromJson: _toNullableDouble)
+  final double? budgetLimit;
+  @override
+  @JsonKey(fromJson: _toNullableDouble)
+  final double? budgetRemaining;
+  @override
+  final int? budgetUsedPct;
+  @override
+  @JsonKey(defaultValue: false)
+  final bool budgetExceeded;
+  final List<CategorySummary> _incomeByCategory;
+  @override
+  @JsonKey(defaultValue: <CategorySummary>[])
+  List<CategorySummary> get incomeByCategory {
+    if (_incomeByCategory is EqualUnmodifiableListView)
+      return _incomeByCategory;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_incomeByCategory);
+  }
+
+  final List<CategorySummary> _expenseByCategory;
+  @override
+  @JsonKey(defaultValue: <CategorySummary>[])
+  List<CategorySummary> get expenseByCategory {
+    if (_expenseByCategory is EqualUnmodifiableListView)
+      return _expenseByCategory;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_expenseByCategory);
+  }
+
+  @override
+  String toString() {
+    return 'CashflowSummary(monthKey: $monthKey, totalIncome: $totalIncome, totalExpense: $totalExpense, netCashflow: $netCashflow, budgetLimit: $budgetLimit, budgetRemaining: $budgetRemaining, budgetUsedPct: $budgetUsedPct, budgetExceeded: $budgetExceeded, incomeByCategory: $incomeByCategory, expenseByCategory: $expenseByCategory)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CashflowSummaryImpl &&
+            (identical(other.monthKey, monthKey) ||
+                other.monthKey == monthKey) &&
+            (identical(other.totalIncome, totalIncome) ||
+                other.totalIncome == totalIncome) &&
+            (identical(other.totalExpense, totalExpense) ||
+                other.totalExpense == totalExpense) &&
+            (identical(other.netCashflow, netCashflow) ||
+                other.netCashflow == netCashflow) &&
+            (identical(other.budgetLimit, budgetLimit) ||
+                other.budgetLimit == budgetLimit) &&
+            (identical(other.budgetRemaining, budgetRemaining) ||
+                other.budgetRemaining == budgetRemaining) &&
+            (identical(other.budgetUsedPct, budgetUsedPct) ||
+                other.budgetUsedPct == budgetUsedPct) &&
+            (identical(other.budgetExceeded, budgetExceeded) ||
+                other.budgetExceeded == budgetExceeded) &&
+            const DeepCollectionEquality().equals(
+              other._incomeByCategory,
+              _incomeByCategory,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._expenseByCategory,
+              _expenseByCategory,
+            ));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    monthKey,
+    totalIncome,
+    totalExpense,
+    netCashflow,
+    budgetLimit,
+    budgetRemaining,
+    budgetUsedPct,
+    budgetExceeded,
+    const DeepCollectionEquality().hash(_incomeByCategory),
+    const DeepCollectionEquality().hash(_expenseByCategory),
+  );
+
+  /// Create a copy of CashflowSummary
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CashflowSummaryImplCopyWith<_$CashflowSummaryImpl> get copyWith =>
+      __$$CashflowSummaryImplCopyWithImpl<_$CashflowSummaryImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CashflowSummaryImplToJson(this);
+  }
+}
+
+abstract class _CashflowSummary implements CashflowSummary {
+  const factory _CashflowSummary({
+    @JsonKey(defaultValue: '') required final String monthKey,
+    @JsonKey(fromJson: _toDoubleOrZero) required final double totalIncome,
+    @JsonKey(fromJson: _toDoubleOrZero) required final double totalExpense,
+    @JsonKey(fromJson: _toDoubleOrZero) required final double netCashflow,
+    @JsonKey(fromJson: _toNullableDouble) final double? budgetLimit,
+    @JsonKey(fromJson: _toNullableDouble) final double? budgetRemaining,
+    final int? budgetUsedPct,
+    @JsonKey(defaultValue: false) required final bool budgetExceeded,
+    @JsonKey(defaultValue: <CategorySummary>[])
+    required final List<CategorySummary> incomeByCategory,
+    @JsonKey(defaultValue: <CategorySummary>[])
+    required final List<CategorySummary> expenseByCategory,
+  }) = _$CashflowSummaryImpl;
+
+  factory _CashflowSummary.fromJson(Map<String, dynamic> json) =
+      _$CashflowSummaryImpl.fromJson;
+
+  @override
+  @JsonKey(defaultValue: '')
+  String get monthKey;
+  @override
+  @JsonKey(fromJson: _toDoubleOrZero)
+  double get totalIncome;
+  @override
+  @JsonKey(fromJson: _toDoubleOrZero)
+  double get totalExpense;
+  @override
+  @JsonKey(fromJson: _toDoubleOrZero)
+  double get netCashflow;
+  @override
+  @JsonKey(fromJson: _toNullableDouble)
+  double? get budgetLimit;
+  @override
+  @JsonKey(fromJson: _toNullableDouble)
+  double? get budgetRemaining;
+  @override
+  int? get budgetUsedPct;
+  @override
+  @JsonKey(defaultValue: false)
+  bool get budgetExceeded;
+  @override
+  @JsonKey(defaultValue: <CategorySummary>[])
+  List<CategorySummary> get incomeByCategory;
+  @override
+  @JsonKey(defaultValue: <CategorySummary>[])
+  List<CategorySummary> get expenseByCategory;
+
+  /// Create a copy of CashflowSummary
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$CashflowSummaryImplCopyWith<_$CashflowSummaryImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 ExpenseEntry _$ExpenseEntryFromJson(Map<String, dynamic> json) {
   return _ExpenseEntry.fromJson(json);
 }
@@ -1163,6 +1586,11 @@ mixin _$ExpenseEntry {
   String? get note => throw _privateConstructorUsedError;
   String? get categoryId => throw _privateConstructorUsedError;
   String? get categoryName => throw _privateConstructorUsedError;
+  @JsonKey(
+    unknownEnumValue: TransactionType.expense,
+    fromJson: TransactionType.fromApiValue,
+  )
+  TransactionType get transactionType => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _dateTimeOrNowFromJson)
   DateTime get takenAt => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _dateTimeOrNowFromJson)
@@ -1193,6 +1621,11 @@ abstract class $ExpenseEntryCopyWith<$Res> {
     String? note,
     String? categoryId,
     String? categoryName,
+    @JsonKey(
+      unknownEnumValue: TransactionType.expense,
+      fromJson: TransactionType.fromApiValue,
+    )
+    TransactionType transactionType,
     @JsonKey(fromJson: _dateTimeOrNowFromJson) DateTime takenAt,
     @JsonKey(fromJson: _dateTimeOrNowFromJson) DateTime createdAt,
   });
@@ -1220,6 +1653,7 @@ class _$ExpenseEntryCopyWithImpl<$Res, $Val extends ExpenseEntry>
     Object? note = freezed,
     Object? categoryId = freezed,
     Object? categoryName = freezed,
+    Object? transactionType = null,
     Object? takenAt = null,
     Object? createdAt = null,
   }) {
@@ -1253,6 +1687,10 @@ class _$ExpenseEntryCopyWithImpl<$Res, $Val extends ExpenseEntry>
                 ? _value.categoryName
                 : categoryName // ignore: cast_nullable_to_non_nullable
                       as String?,
+            transactionType: null == transactionType
+                ? _value.transactionType
+                : transactionType // ignore: cast_nullable_to_non_nullable
+                      as TransactionType,
             takenAt: null == takenAt
                 ? _value.takenAt
                 : takenAt // ignore: cast_nullable_to_non_nullable
@@ -1284,6 +1722,11 @@ abstract class _$$ExpenseEntryImplCopyWith<$Res>
     String? note,
     String? categoryId,
     String? categoryName,
+    @JsonKey(
+      unknownEnumValue: TransactionType.expense,
+      fromJson: TransactionType.fromApiValue,
+    )
+    TransactionType transactionType,
     @JsonKey(fromJson: _dateTimeOrNowFromJson) DateTime takenAt,
     @JsonKey(fromJson: _dateTimeOrNowFromJson) DateTime createdAt,
   });
@@ -1310,6 +1753,7 @@ class __$$ExpenseEntryImplCopyWithImpl<$Res>
     Object? note = freezed,
     Object? categoryId = freezed,
     Object? categoryName = freezed,
+    Object? transactionType = null,
     Object? takenAt = null,
     Object? createdAt = null,
   }) {
@@ -1343,6 +1787,10 @@ class __$$ExpenseEntryImplCopyWithImpl<$Res>
             ? _value.categoryName
             : categoryName // ignore: cast_nullable_to_non_nullable
                   as String?,
+        transactionType: null == transactionType
+            ? _value.transactionType
+            : transactionType // ignore: cast_nullable_to_non_nullable
+                  as TransactionType,
         takenAt: null == takenAt
             ? _value.takenAt
             : takenAt // ignore: cast_nullable_to_non_nullable
@@ -1367,6 +1815,11 @@ class _$ExpenseEntryImpl implements _ExpenseEntry {
     this.note,
     this.categoryId,
     this.categoryName,
+    @JsonKey(
+      unknownEnumValue: TransactionType.expense,
+      fromJson: TransactionType.fromApiValue,
+    )
+    this.transactionType = TransactionType.expense,
     @JsonKey(fromJson: _dateTimeOrNowFromJson) required this.takenAt,
     @JsonKey(fromJson: _dateTimeOrNowFromJson) required this.createdAt,
   });
@@ -1393,6 +1846,12 @@ class _$ExpenseEntryImpl implements _ExpenseEntry {
   @override
   final String? categoryName;
   @override
+  @JsonKey(
+    unknownEnumValue: TransactionType.expense,
+    fromJson: TransactionType.fromApiValue,
+  )
+  final TransactionType transactionType;
+  @override
   @JsonKey(fromJson: _dateTimeOrNowFromJson)
   final DateTime takenAt;
   @override
@@ -1401,7 +1860,7 @@ class _$ExpenseEntryImpl implements _ExpenseEntry {
 
   @override
   String toString() {
-    return 'ExpenseEntry(photoId: $photoId, imageUrl: $imageUrl, thumbnailUrl: $thumbnailUrl, amount: $amount, note: $note, categoryId: $categoryId, categoryName: $categoryName, takenAt: $takenAt, createdAt: $createdAt)';
+    return 'ExpenseEntry(photoId: $photoId, imageUrl: $imageUrl, thumbnailUrl: $thumbnailUrl, amount: $amount, note: $note, categoryId: $categoryId, categoryName: $categoryName, transactionType: $transactionType, takenAt: $takenAt, createdAt: $createdAt)';
   }
 
   @override
@@ -1420,6 +1879,8 @@ class _$ExpenseEntryImpl implements _ExpenseEntry {
                 other.categoryId == categoryId) &&
             (identical(other.categoryName, categoryName) ||
                 other.categoryName == categoryName) &&
+            (identical(other.transactionType, transactionType) ||
+                other.transactionType == transactionType) &&
             (identical(other.takenAt, takenAt) || other.takenAt == takenAt) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
@@ -1436,6 +1897,7 @@ class _$ExpenseEntryImpl implements _ExpenseEntry {
     note,
     categoryId,
     categoryName,
+    transactionType,
     takenAt,
     createdAt,
   );
@@ -1463,6 +1925,11 @@ abstract class _ExpenseEntry implements ExpenseEntry {
     final String? note,
     final String? categoryId,
     final String? categoryName,
+    @JsonKey(
+      unknownEnumValue: TransactionType.expense,
+      fromJson: TransactionType.fromApiValue,
+    )
+    final TransactionType transactionType,
     @JsonKey(fromJson: _dateTimeOrNowFromJson) required final DateTime takenAt,
     @JsonKey(fromJson: _dateTimeOrNowFromJson)
     required final DateTime createdAt,
@@ -1489,6 +1956,12 @@ abstract class _ExpenseEntry implements ExpenseEntry {
   String? get categoryId;
   @override
   String? get categoryName;
+  @override
+  @JsonKey(
+    unknownEnumValue: TransactionType.expense,
+    fromJson: TransactionType.fromApiValue,
+  )
+  TransactionType get transactionType;
   @override
   @JsonKey(fromJson: _dateTimeOrNowFromJson)
   DateTime get takenAt;

@@ -1,4 +1,5 @@
 import '../../data/models/photo_models.dart';
+import '../../../expense/data/models/expense_models.dart';
 import '../repositories/camera_repository.dart';
 
 class SendCapturedPhotoUseCase {
@@ -12,6 +13,7 @@ class SendCapturedPhotoUseCase {
     String? categoryId,
     String recipientScope = 'ALL_FRIENDS',
     List<String>? recipientIds,
+    TransactionType transactionType = TransactionType.expense,
   }) {
     return _repository.uploadCapturedPhoto(
       filePath: filePath,
@@ -19,6 +21,7 @@ class SendCapturedPhotoUseCase {
       categoryId: categoryId,
       recipientScope: recipientScope,
       recipientIds: recipientIds,
+      transactionType: transactionType,
     );
   }
 }

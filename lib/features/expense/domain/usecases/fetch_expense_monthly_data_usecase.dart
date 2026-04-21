@@ -7,15 +7,17 @@ class ExpenseMonthlyDataResult extends Equatable {
   const ExpenseMonthlyDataResult({
     required this.summary,
     required this.budget,
+    required this.cashflow,
     required this.entries,
   });
 
   final ExpenseSummary summary;
   final MonthlyBudget budget;
+  final CashflowSummary cashflow;
   final List<ExpenseEntry> entries;
 
   @override
-  List<Object?> get props => [summary, budget, entries];
+  List<Object?> get props => [summary, budget, cashflow, entries];
 }
 
 class FetchExpenseMonthlyDataUseCase {
@@ -27,13 +29,15 @@ class FetchExpenseMonthlyDataUseCase {
     final results = await Future.wait([
       _repository.getSummary(monthKey),
       _repository.getBudget(monthKey),
-      _repository.getEntries(monthKey),
+      _repository.getCashflow(monthKey),
+      _repository.getEntries(monthKey, type: TransactionType.expense),
     ]);
 
     return ExpenseMonthlyDataResult(
       summary: results[0] as ExpenseSummary,
       budget: results[1] as MonthlyBudget,
-      entries: results[2] as List<ExpenseEntry>,
+      cashflow: results[2] as CashflowSummary,
+      entries: results[3] as List<ExpenseEntry>,
     );
   }
 }

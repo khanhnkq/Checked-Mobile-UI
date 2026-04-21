@@ -3,8 +3,12 @@ import '../../data/models/expense_models.dart';
 abstract class ExpenseRepository {
   Future<List<ExpenseCategory>> getCategories();
   Future<ExpenseSummary> getSummary(String monthKey);
+  Future<CashflowSummary> getCashflow(String monthKey);
   Future<MonthlyBudget> getBudget(String monthKey);
-  Future<List<ExpenseEntry>> getEntries(String monthKey);
+  Future<List<ExpenseEntry>> getEntries(
+    String monthKey, {
+    TransactionType type = TransactionType.expense,
+  });
   Future<MonthlyBudget> updateBudget(
     String monthKey,
     double amountLimit,

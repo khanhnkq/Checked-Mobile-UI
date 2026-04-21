@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/service_locator.dart';
+import '../data/models/expense_models.dart';
 import 'riverpod_notifiers/expense_notifier.dart';
 import 'riverpod_notifiers/expense_state.dart';
 
@@ -24,7 +25,20 @@ final expenseCurrentBudgetProvider = Provider((ref) {
 });
 
 final expenseEntriesProvider = Provider((ref) {
+  final state = ref.watch(expenseProvider);
+  return state.entriesByType[TransactionType.expense] ?? const <ExpenseEntry>[];
+});
+
+final expenseSelectedTypeProvider = Provider((ref) {
+  return ref.watch(expenseProvider).selectedType;
+});
+
+final expenseSelectedEntriesProvider = Provider((ref) {
   return ref.watch(expenseProvider).entries;
+});
+
+final expenseCurrentCashflowProvider = Provider((ref) {
+  return ref.watch(expenseProvider).currentCashflow;
 });
 
 final expenseIsLoadingProvider = Provider((ref) {

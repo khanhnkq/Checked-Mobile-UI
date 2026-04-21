@@ -8,8 +8,11 @@ class ExpenseState with _$ExpenseState {
   const factory ExpenseState({
     @Default([]) List<ExpenseCategory> categories,
     ExpenseSummary? currentSummary,
+    CashflowSummary? currentCashflow,
     MonthlyBudget? currentBudget,
     @Default([]) List<ExpenseEntry> entries,
+    @Default({}) Map<TransactionType, List<ExpenseEntry>> entriesByType,
+    @Default(TransactionType.expense) TransactionType selectedType,
     @Default(false) bool isLoading,
     String? errorMessage,
   }) = _ExpenseState;

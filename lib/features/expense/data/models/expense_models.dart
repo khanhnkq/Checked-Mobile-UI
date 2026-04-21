@@ -5,6 +5,20 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'expense_models.freezed.dart';
 part 'expense_models.g.dart';
 
+enum TransactionType {
+  income,
+  expense;
+
+  String get apiValue => this == TransactionType.income ? 'INCOME' : 'EXPENSE';
+
+  static TransactionType fromApiValue(String? value) {
+    if ((value ?? '').toUpperCase() == 'INCOME') {
+      return TransactionType.income;
+    }
+    return TransactionType.expense;
+  }
+}
+
 double _toDoubleOrZero(Object? value) => (value as num?)?.toDouble() ?? 0;
 double? _toNullableDouble(Object? value) => (value as num?)?.toDouble();
 DateTime _dateTimeOrNowFromJson(Object? value) {
@@ -73,6 +87,25 @@ class CategorySummary with _$CategorySummary {
 }
 
 @freezed
+class CashflowSummary with _$CashflowSummary {
+  const factory CashflowSummary({
+    @JsonKey(defaultValue: '') required String monthKey,
+    @JsonKey(fromJson: _toDoubleOrZero) required double totalIncome,
+    @JsonKey(fromJson: _toDoubleOrZero) required double totalExpense,
+    @JsonKey(fromJson: _toDoubleOrZero) required double netCashflow,
+    @JsonKey(fromJson: _toNullableDouble) double? budgetLimit,
+    @JsonKey(fromJson: _toNullableDouble) double? budgetRemaining,
+    int? budgetUsedPct,
+    @JsonKey(defaultValue: false) required bool budgetExceeded,
+    @JsonKey(defaultValue: <CategorySummary>[]) required List<CategorySummary> incomeByCategory,
+    @JsonKey(defaultValue: <CategorySummary>[]) required List<CategorySummary> expenseByCategory,
+  }) = _CashflowSummary;
+
+  factory CashflowSummary.fromJson(Map<String, dynamic> json) =>
+      _$CashflowSummaryFromJson(json);
+}
+
+@freezed
 class ExpenseEntry with _$ExpenseEntry {
   const factory ExpenseEntry({
     @JsonKey(defaultValue: '') required String photoId,
@@ -82,6 +115,9 @@ class ExpenseEntry with _$ExpenseEntry {
     String? note,
     String? categoryId,
     String? categoryName,
+    @JsonKey(unknownEnumValue: TransactionType.expense, fromJson: TransactionType.fromApiValue)
+    @Default(TransactionType.expense)
+    TransactionType transactionType,
     @JsonKey(fromJson: _dateTimeOrNowFromJson) required DateTime takenAt,
     @JsonKey(fromJson: _dateTimeOrNowFromJson) required DateTime createdAt,
   }) = _ExpenseEntry;
