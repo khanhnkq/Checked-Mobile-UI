@@ -277,7 +277,7 @@ class _OwnerActivityPanel extends StatelessWidget {
     }
 
     return GestureDetector(
-      onTap: () => PhotoActivityBottomSheet.show(context, reactors),
+      onTap: () => PhotoActivityBottomSheet.show(context, reactors, summary?.totalCount ?? 0),
       child: child,
     );
   }
@@ -294,7 +294,7 @@ class _InlineReactorAvatars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final visible = reactors.take(3).toList(growable: false);
+    final visible = reactors.take(5).toList(growable: false);
     final extraCount = totalCount - visible.length;
 
     return SizedBox(

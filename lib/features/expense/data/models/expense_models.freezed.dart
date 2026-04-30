@@ -33,6 +33,11 @@ mixin _$ExpenseCategory {
   bool get isDefault => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: true)
   bool get isActive => throw _privateConstructorUsedError;
+  @JsonKey(
+    fromJson: TransactionType.fromApiValue,
+    toJson: _transactionTypeToJson,
+  )
+  TransactionType get transactionType => throw _privateConstructorUsedError;
 
   /// Serializes this ExpenseCategory to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -58,6 +63,11 @@ abstract class $ExpenseCategoryCopyWith<$Res> {
     @JsonKey(defaultValue: '#FFFFFF') String color,
     @JsonKey(defaultValue: false) bool isDefault,
     @JsonKey(defaultValue: true) bool isActive,
+    @JsonKey(
+      fromJson: TransactionType.fromApiValue,
+      toJson: _transactionTypeToJson,
+    )
+    TransactionType transactionType,
   });
 }
 
@@ -82,6 +92,7 @@ class _$ExpenseCategoryCopyWithImpl<$Res, $Val extends ExpenseCategory>
     Object? color = null,
     Object? isDefault = null,
     Object? isActive = null,
+    Object? transactionType = null,
   }) {
     return _then(
       _value.copyWith(
@@ -109,6 +120,10 @@ class _$ExpenseCategoryCopyWithImpl<$Res, $Val extends ExpenseCategory>
                 ? _value.isActive
                 : isActive // ignore: cast_nullable_to_non_nullable
                       as bool,
+            transactionType: null == transactionType
+                ? _value.transactionType
+                : transactionType // ignore: cast_nullable_to_non_nullable
+                      as TransactionType,
           )
           as $Val,
     );
@@ -131,6 +146,11 @@ abstract class _$$ExpenseCategoryImplCopyWith<$Res>
     @JsonKey(defaultValue: '#FFFFFF') String color,
     @JsonKey(defaultValue: false) bool isDefault,
     @JsonKey(defaultValue: true) bool isActive,
+    @JsonKey(
+      fromJson: TransactionType.fromApiValue,
+      toJson: _transactionTypeToJson,
+    )
+    TransactionType transactionType,
   });
 }
 
@@ -154,6 +174,7 @@ class __$$ExpenseCategoryImplCopyWithImpl<$Res>
     Object? color = null,
     Object? isDefault = null,
     Object? isActive = null,
+    Object? transactionType = null,
   }) {
     return _then(
       _$ExpenseCategoryImpl(
@@ -181,6 +202,10 @@ class __$$ExpenseCategoryImplCopyWithImpl<$Res>
             ? _value.isActive
             : isActive // ignore: cast_nullable_to_non_nullable
                   as bool,
+        transactionType: null == transactionType
+            ? _value.transactionType
+            : transactionType // ignore: cast_nullable_to_non_nullable
+                  as TransactionType,
       ),
     );
   }
@@ -196,6 +221,11 @@ class _$ExpenseCategoryImpl implements _ExpenseCategory {
     @JsonKey(defaultValue: '#FFFFFF') required this.color,
     @JsonKey(defaultValue: false) required this.isDefault,
     @JsonKey(defaultValue: true) required this.isActive,
+    @JsonKey(
+      fromJson: TransactionType.fromApiValue,
+      toJson: _transactionTypeToJson,
+    )
+    this.transactionType = TransactionType.expense,
   });
 
   factory _$ExpenseCategoryImpl.fromJson(Map<String, dynamic> json) =>
@@ -219,10 +249,16 @@ class _$ExpenseCategoryImpl implements _ExpenseCategory {
   @override
   @JsonKey(defaultValue: true)
   final bool isActive;
+  @override
+  @JsonKey(
+    fromJson: TransactionType.fromApiValue,
+    toJson: _transactionTypeToJson,
+  )
+  final TransactionType transactionType;
 
   @override
   String toString() {
-    return 'ExpenseCategory(id: $id, name: $name, icon: $icon, color: $color, isDefault: $isDefault, isActive: $isActive)';
+    return 'ExpenseCategory(id: $id, name: $name, icon: $icon, color: $color, isDefault: $isDefault, isActive: $isActive, transactionType: $transactionType)';
   }
 
   @override
@@ -237,13 +273,23 @@ class _$ExpenseCategoryImpl implements _ExpenseCategory {
             (identical(other.isDefault, isDefault) ||
                 other.isDefault == isDefault) &&
             (identical(other.isActive, isActive) ||
-                other.isActive == isActive));
+                other.isActive == isActive) &&
+            (identical(other.transactionType, transactionType) ||
+                other.transactionType == transactionType));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, name, icon, color, isDefault, isActive);
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    name,
+    icon,
+    color,
+    isDefault,
+    isActive,
+    transactionType,
+  );
 
   /// Create a copy of ExpenseCategory
   /// with the given fields replaced by the non-null parameter values.
@@ -270,6 +316,11 @@ abstract class _ExpenseCategory implements ExpenseCategory {
     @JsonKey(defaultValue: '#FFFFFF') required final String color,
     @JsonKey(defaultValue: false) required final bool isDefault,
     @JsonKey(defaultValue: true) required final bool isActive,
+    @JsonKey(
+      fromJson: TransactionType.fromApiValue,
+      toJson: _transactionTypeToJson,
+    )
+    final TransactionType transactionType,
   }) = _$ExpenseCategoryImpl;
 
   factory _ExpenseCategory.fromJson(Map<String, dynamic> json) =
@@ -293,6 +344,12 @@ abstract class _ExpenseCategory implements ExpenseCategory {
   @override
   @JsonKey(defaultValue: true)
   bool get isActive;
+  @override
+  @JsonKey(
+    fromJson: TransactionType.fromApiValue,
+    toJson: _transactionTypeToJson,
+  )
+  TransactionType get transactionType;
 
   /// Create a copy of ExpenseCategory
   /// with the given fields replaced by the non-null parameter values.

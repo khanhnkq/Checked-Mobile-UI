@@ -6,16 +6,17 @@ import '../../data/models/reaction_models.dart';
 import 'package:locket/core/theme/app_colors.dart';
 
 class PhotoActivityBottomSheet extends StatelessWidget {
-  const PhotoActivityBottomSheet({super.key, required this.reactors});
+  const PhotoActivityBottomSheet({super.key, required this.reactors, this.totalCount = 0});
 
   final List<ReactionActor> reactors;
+  final int totalCount;
 
-  static Future<void> show(BuildContext context, List<ReactionActor> reactors) {
+  static Future<void> show(BuildContext context, List<ReactionActor> reactors, [int totalCount = 0]) {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => PhotoActivityBottomSheet(reactors: reactors),
+      builder: (context) => PhotoActivityBottomSheet(reactors: reactors, totalCount: totalCount),
     );
   }
 
@@ -125,6 +126,18 @@ class PhotoActivityBottomSheet extends StatelessWidget {
                 },
                 separatorBuilder: (context, index) => SizedBox(height: 16.h),
                 itemCount: reactors.length,
+              ),
+            if (totalCount > reactors.length)
+              Padding(
+                padding: EdgeInsets.only(top: 16.h, bottom: 8.h),
+                child: Text(
+                  '+ ${totalCount - reactors.length} người khác',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             SizedBox(height: 24.h),
           ],

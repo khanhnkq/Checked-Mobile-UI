@@ -15,6 +15,9 @@ _$ExpenseCategoryImpl _$$ExpenseCategoryImplFromJson(
   color: json['color'] as String? ?? '#FFFFFF',
   isDefault: json['isDefault'] as bool? ?? false,
   isActive: json['isActive'] as bool? ?? true,
+  transactionType: json['transactionType'] == null
+      ? TransactionType.expense
+      : TransactionType.fromApiValue(json['transactionType'] as String?),
 );
 
 Map<String, dynamic> _$$ExpenseCategoryImplToJson(
@@ -26,6 +29,7 @@ Map<String, dynamic> _$$ExpenseCategoryImplToJson(
   'color': instance.color,
   'isDefault': instance.isDefault,
   'isActive': instance.isActive,
+  'transactionType': _transactionTypeToJson(instance.transactionType),
 };
 
 _$MonthlyBudgetImpl _$$MonthlyBudgetImplFromJson(Map<String, dynamic> json) =>
@@ -160,6 +164,7 @@ Map<String, dynamic> _$$ExpenseEntryImplToJson(_$ExpenseEntryImpl instance) =>
     };
 
 const _$TransactionTypeEnumMap = {
+  TransactionType.all: 'all',
   TransactionType.income: 'income',
   TransactionType.expense: 'expense',
 };

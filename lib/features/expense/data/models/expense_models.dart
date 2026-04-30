@@ -51,11 +51,15 @@ class ExpenseCategory with _$ExpenseCategory {
     @JsonKey(defaultValue: '#FFFFFF') required String color,
     @JsonKey(defaultValue: false) required bool isDefault,
     @JsonKey(defaultValue: true) required bool isActive,
+    @JsonKey(fromJson: TransactionType.fromApiValue, toJson: _transactionTypeToJson)
+    @Default(TransactionType.expense) TransactionType transactionType,
   }) = _ExpenseCategory;
 
   factory ExpenseCategory.fromJson(Map<String, dynamic> json) =>
       _$ExpenseCategoryFromJson(json);
 }
+
+String? _transactionTypeToJson(TransactionType? type) => type?.apiValue;
 
 @freezed
 class MonthlyBudget with _$MonthlyBudget {
